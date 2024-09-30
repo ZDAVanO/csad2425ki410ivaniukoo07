@@ -13,8 +13,8 @@ This repository is created for the Computer Systems Automated Design course. It 
 	- AI vs AI (Random Move or Win Strategy)
 
 ## Technology Stack
-Programming Language: C++
-Hardware Platform: Arduino
-Development Tools: Arduino IDE, Git, GitHub
+Programming Language: C++  
+Hardware Platform: Arduino  
+Development Tools: Arduino IDE, Git, GitHub  
 
 
