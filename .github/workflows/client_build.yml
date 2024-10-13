@@ -24,10 +24,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v2
 
       - name: Build UART_Client_Lab_2 solution
         run: msbuild /p:Configuration=Release /p:Platform=x64 src/win/UART_Client_Lab_2/UART_Client_Lab_2.sln
@@ -37,7 +37,7 @@ jobs:
         with:
             name: build-output
             path: |
-                src/win/UART_Client_Lab_2/**/Release/*.exe
-                src/win/UART_Client_Lab_2/**/Release/*.dll
-                src/win/UART_Client_Lab_2/**/Release/*.lib
+                src/win/UART_Client_Lab_2/x64/Release/*.exe
+                src/win/UART_Client_Lab_2/x64/Release/*.dll
+                src/win/UART_Client_Lab_2/x64/Release/*.lib
 
