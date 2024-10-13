@@ -23,15 +23,17 @@ string parseXML(const string& xml) {
 
 
 int main() {
-    // Запит номера COM-порту у користувача
-    //int portNumber;
-    //cout << "Enter COM port number (e.g., 6 for COM6): ";
-    //cin >> portNumber;
+     /*Запит номера COM-порту у користувача*/
+    int portNumber;
+    cout << "Enter COM port number (e.g., 6 for COM6): ";
+    cin >> portNumber;
 
-    //// Формування назви порту
-    //string portName = "COM" + to_string(portNumber);
+    // Формування назви порту
+    string portName_s = "COM" + to_string(portNumber);
+    const char* portName = portName_s.c_str();
 
-    const char* portName = "COM6";
+
+    /*const char* portName = "COM6";*/
 
     // Відкриття COM-порту
     HANDLE hSerial = CreateFileA(portName, // portName.c_str()
@@ -44,6 +46,7 @@ int main() {
 
     if (hSerial == INVALID_HANDLE_VALUE) {
         cerr << "Error opening port" << endl;
+        system("pause");
         return 1;
     }
 
@@ -53,6 +56,7 @@ int main() {
 
     if (!GetCommState(hSerial, &dcbSerialParams)) {
         cerr << "Error getting port state" << endl;
+        system("pause");
         return 1;
     }
 
@@ -63,6 +67,7 @@ int main() {
 
     if (!SetCommState(hSerial, &dcbSerialParams)) {
         cerr << "Error setting port parameters" << endl;
+        system("pause");
         return 1;
     }
 
@@ -74,6 +79,7 @@ int main() {
 
     if (!SetCommTimeouts(hSerial, &timeouts)) {
         cerr << "Error setting timeouts!" << endl;
+        system("pause");
         return 1;
     }
 
