@@ -55,6 +55,10 @@ private slots:
 
     void on_radioButton_ws_clicked();
 
+    void on_loadButton_clicked();
+
+    void on_saveButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -70,7 +74,8 @@ private:
     void add_player_turn(int row, int col);
 
     void ava_mode();
-
+    void saveGameState(const QString& filePath);
+    void loadGameState(const QString& filePath);
     // QString getTagValue(const QString& response, const QString& tagName);
 };
 #endif // MAINWINDOW_H

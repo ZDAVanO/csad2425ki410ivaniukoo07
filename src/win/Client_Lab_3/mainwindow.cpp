@@ -4,13 +4,12 @@
 #include <QDomDocument>
 #include <QPushButton>
 #include <QIcon>
-
+#include <QFile>
 
 HANDLE hSerial;
 QString portArduino;
 
-QString connect_arduino, game_started, game_mode, ai_strategy, message;
-QString next_turn;
+QString connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
 QString board[3][3];
 
 
@@ -102,6 +101,48 @@ void MainWindow::parseXML(QString input) {
 
 
 
+void MainWindow::saveGameState(const QString& filePath) {
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        ui->label_pc_msg->setText("cant write file for write");
+        return;
+    }
+
+    QTextStream out(&file);
+    QString xmlData = buildXML();  // Викликаємо функцію, яка формує XML
+    out << xmlData;
+
+    file.close();
+
+    ui->label_pc_msg->setText("Game Saved");
+}
+
+void MainWindow::loadGameState(const QString& filePath) {
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        ui->label_pc_msg->setText("cant open file for read");
+        return;
+    }
+
+    QTextStream in(&file);
+    QString xmlData = in.readAll();  // Читаємо весь файл у строку
+    file.close();
+
+    parseXML(xmlData);  // Парсимо XML та відновлюємо стан гри
+    ui->label_pc_msg->setText("Load Complete");
+}
+
+
+
+
+
+
+
+
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -113,8 +154,6 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->labelBoard->setPixmap(boardPixmap);
     // ui->labelBoard->setScaledContents(true);
 
-
-
     loadComPorts();
 
     connect(ui->comboBoxPorts, SIGNAL(currentTextChanged(const QString &)),
@@ -125,12 +164,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     QString xmlData = buildXML();
     updateGameBoard();
-
-
-    // ui->radioButton_mai->setChecked(true);
-    // ui->radioButton_rm->setChecked(true);
-
-
 
 
 }
@@ -194,9 +227,16 @@ void MainWindow::ava_mode() {
 
 
 
+
+
+
+
+
+
+
+
 void MainWindow::on_newButton_clicked()
 {
-
     resetValues();
     game_started = "1";
 
@@ -209,16 +249,41 @@ void MainWindow::on_newButton_clicked()
         return;
     }
 
-
-
     QString receivedXml = sendArduino();
     parseXML(receivedXml);
 
     updateGameBoard();
+}
+void MainWindow::on_loadButton_clicked()
+{
+    loadGameState("game_state.xml");
+    updateGameBoard();
 
 
+    if (game_mode == "mva") ui->radioButton_mai->setChecked(true);
+    if (game_mode == "mvm") ui->radioButton_mvm->setChecked(true);
+    if (game_mode == "ava") ui->radioButton_ava->setChecked(true);
+
+    if (ai_strategy == "rand") ui->radioButton_rm->setChecked(true);
+    if (ai_strategy == "win") ui->radioButton_ws->setChecked(true);
 
 }
+void MainWindow::on_saveButton_clicked()
+{
+    saveGameState("game_state.xml");
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -284,9 +349,8 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
         ui->saveButton->setEnabled(true);
 
         portArduino = port;
-
-
-    } else {
+    }
+    else {
         // Якщо помилка при зв'язку з Arduino
         ui->labelPort->setText(QString("Failed to connect via %1").arg(port));
         ui->labelPort->setStyleSheet("QLabel { color : red; }");
@@ -389,14 +453,12 @@ bool MainWindow::connectArduino(const QString &portName)
 
     Sleep(2000);
 
-
-
     resetValues();
     connect_arduino = "0";
     QString receivedXml = sendArduino();
 
-    QString conValue = getTagValue(receivedXml, "con");
-    qDebug() << "conValue:" << conValue;
+    // QString conValue = getTagValue(receivedXml, "con");
+    // qDebug() << "conValue:" << conValue;
 
     parseXML(receivedXml);
 
@@ -405,9 +467,10 @@ bool MainWindow::connectArduino(const QString &portName)
 
 
 
-void MainWindow::add_player_turn(int row, int col) {
-    if (board[row][col] != "x" && board[row][col] != "o"){
-
+void MainWindow::add_player_turn(int row, int col)
+{
+    if (board[row][col] != "x" && board[row][col] != "o")
+    {
         if (next_turn == "x") {
             board[row][col] = "x";
         }
@@ -429,7 +492,6 @@ void MainWindow::add_player_turn(int row, int col) {
     parseXML(receivedXml);
 
     updateGameBoard();
-
 }
 
 
@@ -444,42 +506,39 @@ void MainWindow::on_button_32_clicked(){ add_player_turn(2, 1); }
 void MainWindow::on_button_33_clicked(){ add_player_turn(2, 2); }
 
 
-
-
-
-
 void MainWindow::on_radioButton_mai_clicked()
 {
     game_mode = "mva";
     qDebug() << "game_mode:" << game_mode;
 }
-
-
 void MainWindow::on_radioButton_mvm_clicked()
 {
     game_mode = "mvm";
     qDebug() << "game_mode:" << game_mode;
 }
-
-
 void MainWindow::on_radioButton_ava_clicked()
 {
     game_mode = "ava";
     qDebug() << "game_mode:" << game_mode;
 }
 
-
-
 void MainWindow::on_radioButton_rm_clicked()
 {
     ai_strategy = "rand";
     qDebug() << "ai_strategy:" << ai_strategy;
 }
-
-
 void MainWindow::on_radioButton_ws_clicked()
 {
     ai_strategy = "win";
     qDebug() << "ai_strategy:" << ai_strategy;
 }
+
+
+
+
+
+
+
+
+
 

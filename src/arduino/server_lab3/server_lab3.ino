@@ -1,16 +1,8 @@
 
 
-
-String connect_arduino, game_started, game_mode, ai_strategy, message ;
-String next_turn;
+String connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
 String board[3][3];
 
-
-// int emptyCells[9];
-// int emptyCount = 0;
-
-// int x_cells = 0;
-// int o_cells = 0;
 
 void setup() {
 
@@ -28,40 +20,30 @@ void loop() {
       connect_arduino = "1";
     }
 
-    if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand"){
-      makeRandomMove();  // Функція для випадкового ходу AI
+
+    if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { makeRandomMove(); }
+
+    if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { avaMove(); }
+
+    if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { stratMove("o", true); }
+
+    if (game_started == "1" && game_mode == "ava" && ai_strategy == "win"){
+      if (next_turn == "o") { stratMove("o", false); }
+      else { stratMove("x", false); }
     }
 
-    if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand"){
-      avaMove();
-    }
-
-    if (game_started == "1" && game_mode == "mvm"){
-      checkBoard();
-    }
+    if (game_started == "1" && game_mode == "mvm") { check_mvm(); }
 
 
-
-
-
-    if (game_started == "1" && game_mode == "mva" && ai_strategy == "win"){
-      stratMove("o");
-    }
-
-
-
-
-      
     String output = buildXML();
     output.replace("\n", ""); // Заміна /n на пустий рядок
     Serial.print(output);
-
 
   }
 }
 
 
-bool checkWinner(String board[3][3], String player) {
+bool checkBoardWin(String board[3][3], String player) {
   // Перевірка рядків (горизонталі)
   for (int i = 0; i < 3; i++) {
     if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
@@ -87,32 +69,48 @@ bool checkWinner(String board[3][3], String player) {
   return false;
 }
 
+bool allFieldsOccupied(String board[3][3]) {
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (board[i][j] != "x" && board[i][j] != "o") {
+        return false; // Знайшли пусте поле, повертаємо false
+      }
+    }
+  }
+  return true; // Якщо всі поля заповнені
+}
+
+bool checkForWinner() {
+
+  if (checkBoardWin(board, "x")) {
+    message = "Winner_X";
+    game_started = "0";
+    return true;
+  }
+  else if (checkBoardWin(board, "o")) {
+    message = "Winner_O";
+    game_started = "0";
+    return true;
+  }
+  else if (allFieldsOccupied(board)) {
+    message = "Draw";
+    game_started = "0";
+    return true;
+  }
+  else { 
+    return false;
+  }
+}
+
+
+
 void avaMove() {
-  // Створюємо масив, що зберігає індекси порожніх клітинок
   int emptyCells[9];
   int emptyCount = 0;
-
-  // emptyCount = 0;
-
   int x_cells = 0;
   int o_cells = 0;
 
-  // x_cells = 0;
-  // o_cells = 0;
-
-
-  if (checkWinner(board, "x")) {
-    message = "Winner_X";
-    game_started = "0";
-    return;
-  }
-  else if (checkWinner(board, "o")) {
-    message = "Winner_O";
-    game_started = "0";
-    return;
-  }
-
-
+  if (checkForWinner()) { return; }
 
   // Проходимо через поле та знаходимо всі порожні клітинки
   for (int row = 0; row < 3; row++) {
@@ -131,11 +129,6 @@ void avaMove() {
 
     }
   }
-
-  // next_turn = "o";
-  // message = "ava";
-
-
 
   // Якщо є порожні клітинки, вибираємо випадкову
   if (emptyCount > 0) {
@@ -146,9 +139,6 @@ void avaMove() {
     int row = rand_cell / 3;
     int col = rand_cell % 3;
 
-    // Записуємо "o" в обрану клітинку
-    
-
     if(next_turn == "o"){
       board[row][col] = "o"; 
       next_turn = "x";
@@ -156,41 +146,21 @@ void avaMove() {
     else {
       board[row][col] = "x"; 
       next_turn = "o";
-    }
-    
-
+    }  
   }
   else {
     message = "Draw";
     game_started = "0";
   }
-
-
-
 }
 
-void checkBoard() {
-
+void check_mvm() {
   int emptyCells[9];
   int emptyCount = 0;
-
-  // emptyCount = 0;
-
   int x_cells = 0;
   int o_cells = 0;
 
-  // x_cells = 0;
-  // o_cells = 0;
-
-  if (checkWinner(board, "x")) {
-    message = "Winner_X!";
-    return;
-  }
-  else if (checkWinner(board, "o")) {
-    message = "Winner_O!";
-    return;
-  }
-
+  if (checkForWinner()) { return; }
 
   // Проходимо через поле та знаходимо всі порожні клітинки
   for (int row = 0; row < 3; row++) {
@@ -206,7 +176,6 @@ void checkBoard() {
         emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
         emptyCount++;
       }
-
     }
   }
 
@@ -225,42 +194,23 @@ void checkBoard() {
     }
   }
 
-  if(next_turn == "x"){
+  if(next_turn == "x") {
     message = "Player_O_turn";
-    // message = String(x_cells);
     next_turn = "o";
   }
   else {
     message = "Player_X_turn";
-    // message = String(x_cells);
     next_turn = "x";
   }
-
-
 }
 
 void makeRandomMove() {
-  // Створюємо масив, що зберігає індекси порожніх клітинок
   int emptyCells[9];
   int emptyCount = 0;
-
-  // emptyCount = 0;
-
   int x_cells = 0;
   int o_cells = 0;
 
-  // x_cells = 0;
-  // o_cells = 0;
-
-  if (checkWinner(board, "x")) {
-    message = "Winner_X!";
-    return;
-  }
-  else if (checkWinner(board, "o")) {
-    message = "Winner_O!";
-    return;
-  }
-
+  if (checkForWinner()) { return; }
 
   // Проходимо через поле та знаходимо всі порожні клітинки
   for (int row = 0; row < 3; row++) {
@@ -276,13 +226,11 @@ void makeRandomMove() {
         emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
         emptyCount++;
       }
-
     }
   }
 
   next_turn = "x";
-  message = "Player turn";
-
+  message = "Player_x_turn";
 
   if (emptyCount == 9) {
     int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
@@ -302,43 +250,29 @@ void makeRandomMove() {
 
     // Записуємо "o" в обрану клітинку
     board[row][col] = "o"; 
-
-
-    
-
   }
 
-  if (checkWinner(board, "x")) {
-    message = "Winner_X!";
-    return;
-  }
-  else if (checkWinner(board, "o")) {
-    message = "Winner_O!";
-    return;
-  }
-
+  checkForWinner();
 }
 
 
 
-
-
-bool checkWin(String player) {
+bool checkWin(String player, String currentPlayer) {
   for (int i = 0; i < 3; i++) {
     // Перевірка рядків і стовпців
     if ((board[i][0] == player && board[i][1] == player && board[i][2] == "-") ||
         (board[i][0] == player && board[i][2] == player && board[i][1] == "-") ||
         (board[i][1] == player && board[i][2] == player && board[i][0] == "-")) {
-      board[i][0] == "-" ? board[i][0] = "o" : 
-      board[i][1] == "-" ? board[i][1] = "o" : board[i][2] = "o";
+      board[i][0] == "-" ? board[i][0] = currentPlayer : 
+      board[i][1] == "-" ? board[i][1] = currentPlayer : board[i][2] = currentPlayer;
       return true;
     }
     
     if ((board[0][i] == player && board[1][i] == player && board[2][i] == "-") ||
         (board[0][i] == player && board[2][i] == player && board[1][i] == "-") ||
         (board[1][i] == player && board[2][i] == player && board[0][i] == "-")) {
-      board[0][i] == "-" ? board[0][i] = "o" : 
-      board[1][i] == "-" ? board[1][i] = "o" : board[2][i] = "o";
+      board[0][i] == "-" ? board[0][i] = currentPlayer : 
+      board[1][i] == "-" ? board[1][i] = currentPlayer : board[2][i] = currentPlayer;
       return true;
     }
   }
@@ -347,125 +281,101 @@ bool checkWin(String player) {
   if ((board[0][0] == player && board[1][1] == player && board[2][2] == "-") ||
       (board[0][0] == player && board[2][2] == player && board[1][1] == "-") ||
       (board[1][1] == player && board[2][2] == player && board[0][0] == "-")) {
-    board[0][0] == "-" ? board[0][0] = "o" : 
-    board[1][1] == "-" ? board[1][1] = "o" : board[2][2] = "o";
+    board[0][0] == "-" ? board[0][0] = currentPlayer : 
+    board[1][1] == "-" ? board[1][1] = currentPlayer : board[2][2] = currentPlayer;
     return true;
   }
 
   if ((board[0][2] == player && board[1][1] == player && board[2][0] == "-") ||
       (board[0][2] == player && board[2][0] == player && board[1][1] == "-") ||
       (board[1][1] == player && board[2][0] == player && board[0][2] == "-")) {
-    board[0][2] == "-" ? board[0][2] = "o" : 
-    board[1][1] == "-" ? board[1][1] = "o" : board[2][0] = "o";
+    board[0][2] == "-" ? board[0][2] = currentPlayer : 
+    board[1][1] == "-" ? board[1][1] = currentPlayer : board[2][0] = currentPlayer;
     return true;
   }
 
   return false;
 }
 
+void stratMove(String currentPlayer, bool randomPlayer) {
 
+  if (checkForWinner()) { return; }
 
+  bool made_move = false;
 
-
-void stratMove(String currentPlayer) {
-  
   String opponent = (currentPlayer == "x") ? "o" : "x";
 
+  next_turn = opponent;
+  message = "Player_"+ opponent +"_turn";
 
-  int emptyCells[9];
   int emptyCount = 0;
-  int x_cells = 0;
-  int o_cells = 0;
 
-  if (checkWinner(board, "x")) {
-    message = "Winner_X";
-    game_started = "0";
-    return;
-  }
-  else if (checkWinner(board, "o")) {
-    message = "Winner_O";
-    game_started = "0";
-    return;
-  }
-
-
-  next_turn = "x";
-  message = "Player turn";
-
-  // Проходимо через поле та знаходимо всі порожні клітинки
   for (int row = 0; row < 3; row++) {
     for (int col = 0; col < 3; col++) {
 
-      if (board[row][col] == "x") {
-        x_cells++;
-      }
-      else if (board[row][col] == "o") {
-        o_cells++;
-      }
-      else {
-        emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
+      if (board[row][col] != "x" && board[row][col] != "0") {
         emptyCount++;
       }
-
     }
   }
 
-
-  if (emptyCount == 9) {
-    int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
-    if (randomChoice == 0) {
-      return;
+  if (randomPlayer){
+    if (emptyCount == 9) {
+      int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
+      if (randomChoice == 0) {
+        return;
+      }
     }
   }
-
   
-
   // 1. Спробуємо виграти
-  if (checkWin("o")) return;
+  if (!made_move && checkWin(currentPlayer, currentPlayer)) {
+    made_move = true;
+  } 
 
   // 2. Заблокуємо "x", якщо він може виграти
-  if (checkWin("x")) return;
+  if (!made_move && checkWin(opponent, currentPlayer)) {
+    made_move = true;
+  }
 
   // 3. Займаємо центр, якщо він вільний
-  if (board[1][1] == "-") {
-    board[1][1] = "o";
-    return;
+  if (!made_move && board[1][1] == "-") {
+    board[1][1] = currentPlayer;
+    made_move = true;
   }
 
   // 4. Займаємо кути, якщо вони вільні
-  if (board[0][0] == "-") {
-    board[0][0] = "o";
-    return;
+  if (!made_move && board[0][0] == "-") {
+    board[0][0] = currentPlayer;
+    made_move = true;
   }
-  if (board[0][2] == "-") {
-    board[0][2] = "o";
-    return;
+  if (!made_move && board[0][2] == "-") {
+    board[0][2] = currentPlayer;
+    made_move = true;
   }
-  if (board[2][0] == "-") {
-    board[2][0] = "o";
-    return;
+  if (!made_move && board[2][0] == "-") {
+    board[2][0] = currentPlayer;
+    made_move = true;
   }
-  if (board[2][2] == "-") {
-    board[2][2] = "o";
-    return;
+  if (!made_move && board[2][2] == "-") {
+    board[2][2] = currentPlayer;
+    made_move = true;
   }
 
   // 5. Займаємо будь-яке інше місце
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      if (board[i][j] == "-") {
-        board[i][j] = "o";
-        return;
+
+      if (!made_move && board[i][j] == "-") {
+        board[i][j] = currentPlayer;
+        made_move = true;
       }
     }
   }
 
-
+  if (checkForWinner()) { return; }
 
 }
-
-
-
 
 
 
