@@ -35,5 +35,7 @@ private:
 
     void updateGameBoard(const QString &xmlData);
     void updateButtonIcon(QPushButton *button, const QString &value);
+
+    // QString getTagValue(const QString& response, const QString& tagName);
 };
 #endif // MAINWINDOW_H

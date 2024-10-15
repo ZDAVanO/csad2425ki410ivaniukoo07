@@ -7,13 +7,13 @@
 
 
 
-QString xmlData = R"(<game>
-                            <connect>0</connect>
-                            <gstarted>0</gstarted>
-                            <gmode>ManVsAI</gmode>
-                            <aistrat>Random</aistrat>
-                            <msg></msg>
-                            <board>
+QString xmlData = R"(<g>
+                            <con>0</con>
+                            <gs>0</gs>
+                            <gm>ManVsAI</gm>
+                            <ais>Random</ais>
+                            <msg>hello</msg>
+                            <brd>
                                 <c11>-</c11>
                                 <c12>-</c12>
                                 <c13>-</c13>
@@ -23,8 +23,8 @@ QString xmlData = R"(<game>
                                 <c31>-</c31>
                                 <c32>-</c32>
                                 <c33>-</c33>
-                            </board>
-                          </game>)";
+                            </brd>
+                          </g>)";
 
 
 
@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->radioButton_mai->setChecked(true);
     ui->radioButton_ws->setChecked(true);
 
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -76,7 +79,7 @@ void MainWindow::updateGameBoard(const QString &xmlData)
 
     // Отримуємо кореневий елемент
     QDomElement root = doc.documentElement();
-    QDomElement gameBoard = root.firstChildElement("board");
+    QDomElement gameBoard = root.firstChildElement("brd");
 
     // QDomNodeList c13List = root.elementsByTagName("c13");
     // if (!c13List.isEmpty()) {
@@ -168,13 +171,13 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
 
 
     ui->labelPort->setText(QString("Trying to connect via %1").arg(port));
-    ui->labelPort->setStyleSheet("QLabel { color : yellow; }");
+    ui->labelPort->setStyleSheet("QLabel { color : lightblue; }");
     QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
 
     if (testArduino(port)) {
         // Якщо відповідь від Arduino коректна
         ui->labelPort->setText("Arduino is connected");
-        ui->labelPort->setStyleSheet("QLabel { color : green; }");
+        ui->labelPort->setStyleSheet("QLabel { color : lightgreen; }");
 
         // Активуємо кнопки
         ui->newButton->setEnabled(true);
@@ -193,6 +196,33 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
         ui->saveButton->setEnabled(false);
     }
 }
+
+
+
+
+QString getTagValue(const QString& response, const QString& tagName) {
+    // Формуємо строки для відкриваючого та закриваючого тегів
+    QString openTag = "<" + tagName + ">";
+    QString closeTag = "</" + tagName + ">";
+
+    // Знаходимо позиції відкриваючого та закриваючого тегів
+    int startIndex = response.indexOf(openTag);
+    int endIndex = response.indexOf(closeTag, startIndex);
+
+    // Якщо тег не знайдено, повертаємо пустий рядок
+    if (startIndex == -1 || endIndex == -1) {
+        return QString();
+    }
+
+    // Вираховуємо позицію, з якої починається текст між тегами
+    startIndex += openTag.length();
+
+    // Витягуємо текст між тегами
+    return response.mid(startIndex, endIndex - startIndex);
+}
+
+
+
 
 
 // Функція для тестування зв'язку з Arduino
@@ -249,7 +279,7 @@ bool MainWindow::testArduino(const QString &portName)
 
     std::string xmlString = xmlData_trim.toStdString();
     const char *dataToSend = xmlString.c_str();
-    qDebug() << "Sended:" << dataToSend;
+    qDebug() << "Sended  :" << dataToSend;
     //const char *dataToSend = "0";
     DWORD bytesWritten;
     if (!WriteFile(hSerial, dataToSend, strlen(dataToSend), &bytesWritten, nullptr)) {
@@ -271,6 +301,11 @@ bool MainWindow::testArduino(const QString &portName)
     // Перевіряємо, чи отримали правильну відповідь
     QString response(incomingData);
     qDebug() << "Response:" << response;
-    return response.trimmed() == "1";  // Порівнюємо з відповіддю Arduino
+
+    QString conValue = getTagValue(incomingData, "con");
+    qDebug() << "conValue:" << conValue;
+
+    return conValue.trimmed() == "1";  // Порівнюємо з відповіддю Arduino
 }
+
 

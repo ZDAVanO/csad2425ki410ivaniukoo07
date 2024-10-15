@@ -2,63 +2,40 @@
 
 
 
-String receivedMessage = ""; // Змінна для зберігання отриманих даних
-String connectionStatus = "0";
-String gameStarted = "0";
-String gameMode = "ManVsAI";
-String aiStrategy = "Random";
-String message = "You win!";
-String gameBoard[3][3];
-
-
-
-
-String testData = "<game>"
-                     "<connect>0</connect>"
-                     "<gstarted>0</gstarted>"
-                     "<gmode>ManVsAI</gmode>"
-                     "<aistrat>Random</aistrat>"
-                     "<msg>You win!</msg>"
-                     "<board>"
-                     "<c11>x</c11>"
-                     "<c12>-</c12>"
-                     "<c13>-</c13>"
-                     "<c21>o</c21>"
-                     "<c22>-</c22>"
-                     "<c23>-</c23>"
-                     "<c31>-</c31>"
-                     "<c32>-</c32>"
-                     "<c33>o</c33>"
-                     "</board>"
-                     "</game>";
+String connect, gstarted, gmode, aistrat, msg;
+String board[3][3];
 
 
 
 void setup() {
-  pinMode(13, OUTPUT); // Ініціалізація піну для лампочки
-  digitalWrite(13, HIGH);
-
   Serial.begin(9600);  // Налаштування серійного зв'язку зі швидкістю 9600 біт/с
-  // while (!Serial);     // Очікуємо поки порт стане доступним (тільки для Leonardo і схожих плат)
-  // delay(2000);    
-  digitalWrite(13, LOW);
 
-  gameBoard[0][0] = '-';
-  gameBoard[0][1] = '-';
-  gameBoard[0][2] = '-';
-  gameBoard[1][0] = '-';
-  gameBoard[1][1] = '-';
-  gameBoard[1][2] = '-';
-  gameBoard[2][0] = '-';
-  gameBoard[2][1] = '-';
-  gameBoard[2][2] = '-';
 
-  // parseXML(testData);
-  // Serial.print(generateXML());
+  // Приклад отриманого XML рядка
+  // String input = "<g><con>0</con><gs>0</gs><gm>ManVsAI</gm><ais>Random</ais><msg>hello</msg><brd><c11>-</c11><c12>-</c12><c13>-</c13><c21>-</c21><c22>-</c22><c23>-</c23><c31>-</c31><c32>-</c32><c33>x</c33></brd></g>";
+
+  // Парсинг XML
+  // parseXML(input);
+
+  // Друк значень для перевірки
+  // Serial.println("connect: " + connect);
+  // Serial.println("gstarted: " + gstarted);
+  // Serial.println("gmode: " + gmode);
+  // Serial.println("aistrat: " + aistrat);
+  // Serial.println("msg: " + msg);
+
+  // for (int i = 0; i < 3; i++) {
+  //   for (int j = 0; j < 3; j++) {
+  //     Serial.print(board[i][j] + " ");
+  //   }
+  //   Serial.println();
+  // }
+
+  // Збір нового XML рядка
+  // String output = buildXML();
+  // Serial.println(output);
+  
 }
-
-
-
 
 void loop() {
   if (Serial.available() > 0) {
@@ -67,8 +44,8 @@ void loop() {
 
 
     String receivedMessage = Serial.readString();  // Читаємо дані з серійного порту
-    digitalWrite(13, HIGH);
 
+    
     // String parsedMessage = parseXML(receivedMessage);
     
     // // Перетворюємо всі літери в верхній регістр
@@ -77,14 +54,17 @@ void loop() {
     // }
 
     // String xmlToSend = createXML(parsedMessage);
+
+
     parseXML(receivedMessage);
 
-    digitalWrite(13, LOW);
+    // connectionStatus = "1";
+    connect = "1";
+    msg = "AAAA";
 
-    connectionStatus = "1";
-
-    String myString = generateXML();
-    Serial.println(myString);
+    String output = buildXML();
+    output.replace("\n", ""); // Заміна /n на пустий рядок
+    Serial.println(output);
 
 
 
@@ -101,78 +81,93 @@ void loop() {
 
 
 
+void parseXML(String input) {
 
-void parseXML(String xml) {
-    // Парсинг XML для отримання даних
-    connectionStatus = getValue(xml, "connect");
-    gameStarted = getValue(xml, "gstarted");
-    gameMode = getValue(xml, "gmode");
-    aiStrategy = getValue(xml, "aistrat");
-    message = getValue(xml, "msg");
-    
-    // Парсинг ігрової дошки
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            String cell = "c" + String(row + 1) + String(col + 1);
-            gameBoard[row][col] = getValue(xml, cell);
-        }
-    }
+  connect = getTagValue(input, "con");
+  gstarted = getTagValue(input, "gs");
+  gmode = getTagValue(input, "gm");
+  aistrat = getTagValue(input, "ais");
+  msg = getTagValue(input, "msg");
 
-    // Для демонстрації виведемо отримані дані
-    // Serial.println("ConnectionStatus: " + connectionStatus);
-    // Serial.println("GameStarted: " + gameStarted);
-    // Serial.println("GameMode: " + gameMode);
-    // Serial.println("AIStrategy: " + aiStrategy);
-    // Serial.println("Message: " + message);
-
+  board[0][0] = getTagValue(input, "c11");
+  board[0][1] = getTagValue(input, "c12");
+  board[0][2] = getTagValue(input, "c13");
+  board[1][0] = getTagValue(input, "c21");
+  board[1][1] = getTagValue(input, "c22");
+  board[1][2] = getTagValue(input, "c23");
+  board[2][0] = getTagValue(input, "c31");
+  board[2][1] = getTagValue(input, "c32");
+  board[2][2] = getTagValue(input, "c33");
 }
 
 
-void printBoard() {
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            Serial.print(gameBoard[row][col] + " ");
-        }
-        Serial.println();
-    }
+String getTagValue(String input, String tag) {
+
+  String openTag = "<" + tag + ">";
+  String closeTag = "</" + tag + ">";
+  int start = input.indexOf(openTag) + openTag.length();
+  int end = input.indexOf(closeTag);
+
+  // Serial.println("tag: " + tag);
+
+  // Serial.print("openTag: ");
+  // Serial.println(openTag);
+
+  // Serial.print("closeTag: ");
+  // Serial.println(closeTag);
+
+  // Serial.print("start: ");
+  // Serial.println(start);
+
+  // Serial.print("end: ");
+  // Serial.println(end);
+
+  // Serial.println();
+
+
+
+  if (start == -1 || end == -1 || end < start) {
+    return "-";
+  }
+
+  return input.substring(start, end);
 }
 
 
 
-String getValue(String xml, String tag) {
-    // Отримуємо значення між тегами
-    String startTag = "<" + tag + ">";
-    String endTag = "</" + tag + ">";
-    int startIndex = xml.indexOf(startTag) + startTag.length();
-    int endIndex = xml.indexOf(endTag);
-    
-    if (startIndex >= 0 && endIndex > startIndex) {
-        return xml.substring(startIndex, endIndex);
-    }
-    return "-"; // Повертаємо порожнє, якщо не знайдено
+
+// void printBoard() {
+//     for (int row = 0; row < 3; row++) {
+//         for (int col = 0; col < 3; col++) {
+//             Serial.print(board[row][col] + " ");
+//         }
+//         Serial.println();
+//     }
+// }
+
+
+
+
+// Функція для збирання нового XML рядка
+String buildXML() {
+  String output = "<g>\n";
+  output += "<con>" + connect + "</con>\n";
+  output += "<gs>" + gstarted + "</gs>\n";
+  output += "<gm>" + gmode + "</gm>\n";
+  output += "<ais>" + aistrat + "</ais>\n";
+  output += "<msg>" + msg + "</msg>\n";
+  output += "<brd>\n";
+  output += "<c11>" + board[0][0] + "</c11>\n";
+  output += "<c12>" + board[0][1] + "</c12>\n";
+  output += "<c13>" + board[0][2] + "</c13>\n";
+  output += "<c21>" + board[1][0] + "</c21>\n";
+  output += "<c22>" + board[1][1] + "</c22>\n";
+  output += "<c23>" + board[1][2] + "</c23>\n";
+  output += "<c31>" + board[2][0] + "</c31>\n";
+  output += "<c32>" + board[2][1] + "</c32>\n";
+  output += "<c33>" + board[2][2] + "</c33>\n";
+  output += "</brd>\n";
+  output += "</g>\n";
+  return output;
 }
 
-
-
-
-
-String generateXML() {
-    // Генерація нового XML на основі змінених змінних
-    String xml = "<game>\n";
-    xml += "    <connect>" + connectionStatus + "</connect>\n";
-    xml += "    <gstarted>" + gameStarted + "</gstarted>\n";
-    xml += "    <gmode>" + gameMode + "</gmode>\n";
-    xml += "    <aistrat>" + aiStrategy + "</aistrat>\n";
-    xml += "    <msg>" + message + "</msg>\n";
-    xml += "    <board>\n";
-    
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            xml += "        <c" + String(row + 1) + String(col + 1) + ">" + gameBoard[row][col] + "</c" + String(row + 1) + String(col + 1) + ">\n";
-        }
-    }
-    
-    xml += "    </board>\n";
-    xml += "</game>";
-    return xml;
-}
