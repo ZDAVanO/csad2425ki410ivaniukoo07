@@ -176,8 +176,7 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::updateGameBoard()
-{
+void MainWindow::updateGameBoard(){
     updateButtonIcon(ui->button_11, board[0][0]);
     updateButtonIcon(ui->button_12, board[0][1]);
     updateButtonIcon(ui->button_13, board[0][2]);
@@ -189,8 +188,7 @@ void MainWindow::updateGameBoard()
     updateButtonIcon(ui->button_33, board[2][2]);
 }
 
-void MainWindow::updateButtonIcon(QPushButton *button, const QString &value)
-{
+void MainWindow::updateButtonIcon(QPushButton *button, const QString &value){
     if (value == "x") {
         button->setIcon(QIcon(":/resources/assets/x2c.png"));  // Іконка хрестика
     } else if (value == "o") {
@@ -203,15 +201,10 @@ void MainWindow::updateButtonIcon(QPushButton *button, const QString &value)
 
 
 
-
-
-
-
-void MainWindow::ava_mode() {
-
-
-    while (game_started == "1") {
-
+void MainWindow::ava_mode()
+{
+    while (game_started == "1")
+    {
         QString receivedXml = sendArduino();
         parseXML(receivedXml);
 
@@ -222,17 +215,6 @@ void MainWindow::ava_mode() {
         //Sleep(150);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 void MainWindow::on_newButton_clicked()
@@ -272,25 +254,6 @@ void MainWindow::on_saveButton_clicked()
 {
     saveGameState("game_state.xml");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void MainWindow::loadComPorts()
@@ -361,10 +324,6 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
         ui->saveButton->setEnabled(false);
     }
 }
-
-
-
-
 
 
 
@@ -466,9 +425,14 @@ bool MainWindow::connectArduino(const QString &portName)
 }
 
 
-
 void MainWindow::add_player_turn(int row, int col)
 {
+    // connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
+    if (connect_arduino != "1" || game_started != "1" || game_mode == "ava") {
+        return;
+    }
+
+
     if (board[row][col] != "x" && board[row][col] != "o")
     {
         if (next_turn == "x") {
@@ -494,7 +458,6 @@ void MainWindow::add_player_turn(int row, int col)
     updateGameBoard();
 }
 
-
 void MainWindow::on_button_11_clicked(){ add_player_turn(0, 0); }
 void MainWindow::on_button_12_clicked(){ add_player_turn(0, 1); }
 void MainWindow::on_button_13_clicked(){ add_player_turn(0, 2); }
@@ -506,39 +469,26 @@ void MainWindow::on_button_32_clicked(){ add_player_turn(2, 1); }
 void MainWindow::on_button_33_clicked(){ add_player_turn(2, 2); }
 
 
-void MainWindow::on_radioButton_mai_clicked()
-{
+
+void MainWindow::on_radioButton_mai_clicked(){
     game_mode = "mva";
-    qDebug() << "game_mode:" << game_mode;
+    // qDebug() << "game_mode:" << game_mode;
 }
-void MainWindow::on_radioButton_mvm_clicked()
-{
+void MainWindow::on_radioButton_mvm_clicked(){
     game_mode = "mvm";
-    qDebug() << "game_mode:" << game_mode;
+    // qDebug() << "game_mode:" << game_mode;
 }
-void MainWindow::on_radioButton_ava_clicked()
-{
+void MainWindow::on_radioButton_ava_clicked(){
     game_mode = "ava";
-    qDebug() << "game_mode:" << game_mode;
+    // qDebug() << "game_mode:" << game_mode;
 }
 
-void MainWindow::on_radioButton_rm_clicked()
-{
+void MainWindow::on_radioButton_rm_clicked(){
     ai_strategy = "rand";
-    qDebug() << "ai_strategy:" << ai_strategy;
+    // qDebug() << "ai_strategy:" << ai_strategy;
 }
-void MainWindow::on_radioButton_ws_clicked()
-{
+void MainWindow::on_radioButton_ws_clicked(){
     ai_strategy = "win";
-    qDebug() << "ai_strategy:" << ai_strategy;
+    // qDebug() << "ai_strategy:" << ai_strategy;
 }
-
-
-
-
-
-
-
-
-
 
