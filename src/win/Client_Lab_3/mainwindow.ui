@@ -137,7 +137,7 @@
      <rect>
       <x>310</x>
       <y>10</y>
-      <width>411</width>
+      <width>201</width>
       <height>51</height>
      </rect>
     </property>
@@ -147,6 +147,19 @@
     <property name="frameShadow">
      <enum>QFrame::Shadow::Raised</enum>
     </property>
+    <widget class="QLabel" name="label_pc_msg">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Info here</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="frame_game_modes">
     <property name="enabled">
@@ -424,22 +437,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>240</y>
-      <width>291</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Shape::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Shadow::Raised</enum>
-    </property>
-   </widget>
    <widget class="QFrame" name="frame_ai_modes">
     <property name="enabled">
      <bool>true</bool>
@@ -462,7 +459,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>70</y>
        <width>121</width>
        <height>22</height>
       </rect>
@@ -478,7 +475,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>70</y>
+       <y>40</y>
        <width>121</width>
        <height>22</height>
       </rect>
@@ -513,6 +510,38 @@
      </property>
      <property name="wordWrap">
       <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>10</y>
+      <width>201</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_arduino_msg">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>171</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Arduino msg here</string>
      </property>
     </widget>
    </widget>

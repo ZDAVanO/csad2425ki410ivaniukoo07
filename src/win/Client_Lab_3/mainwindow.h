@@ -27,14 +27,49 @@ private slots:
 
     void onComboBoxPortChanged(const QString &port);
 
+    void on_button_11_clicked();
+
+    void on_button_12_clicked();
+
+    void on_button_13_clicked();
+
+    void on_button_21_clicked();
+
+    void on_button_22_clicked();
+
+    void on_button_23_clicked();
+
+    void on_button_31_clicked();
+
+    void on_button_32_clicked();
+
+    void on_button_33_clicked();
+
+    void on_radioButton_mai_clicked();
+
+    void on_radioButton_mvm_clicked();
+
+    void on_radioButton_ava_clicked();
+
+    void on_radioButton_rm_clicked();
+
+    void on_radioButton_ws_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     void loadComPorts();
-    bool testArduino(const QString &port); // Функція для тестування Arduino
+    bool connectArduino(const QString &port); // Функція для тестування Arduino
+    QString sendArduino();
 
-    void updateGameBoard(const QString &xmlData);
+    void updateGameBoard();
     void updateButtonIcon(QPushButton *button, const QString &value);
+
+    void parseXML(QString input);
+
+    void add_player_turn(int row, int col);
+
+    void ava_mode();
 
     // QString getTagValue(const QString& response, const QString& tagName);
 };

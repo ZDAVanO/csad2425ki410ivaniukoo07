@@ -6,25 +6,99 @@
 #include <QIcon>
 
 
+HANDLE hSerial;
+QString portArduino;
 
-QString xmlData = R"(<g>
-                            <con>0</con>
-                            <gs>0</gs>
-                            <gm>ManVsAI</gm>
-                            <ais>Random</ais>
-                            <msg>hello</msg>
-                            <brd>
-                                <c11>-</c11>
-                                <c12>-</c12>
-                                <c13>-</c13>
-                                <c21>-</c21>
-                                <c22>-</c22>
-                                <c23>-</c23>
-                                <c31>-</c31>
-                                <c32>-</c32>
-                                <c33>-</c33>
-                            </brd>
-                          </g>)";
+QString connect_arduino, game_started, game_mode, ai_strategy, message;
+QString next_turn;
+QString board[3][3];
+
+
+void resetValues() {
+    // connect_arduino = "0";
+    game_started = "0";
+    // game_mode = "mva";
+    // ai_strategy = "rand";
+    message = "";
+
+    // Заповнюємо масив board значенням "-"
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            board[i][j] = "-";
+        }
+    }
+}
+
+
+QString buildXML() {
+    QString output = "<g>\n";
+    output += "<con>" + connect_arduino + "</con>\n";
+    output += "<gs>" + game_started + "</gs>\n";
+    output += "<gm>" + game_mode + "</gm>\n";
+    output += "<ais>" + ai_strategy + "</ais>\n";
+    output += "<msg>" + message + "</msg>\n";
+    output += "<nt>" + next_turn + "</nt>\n";
+    output += "<brd>\n";
+    output += "<c11>" + board[0][0] + "</c11>\n";
+    output += "<c12>" + board[0][1] + "</c12>\n";
+    output += "<c13>" + board[0][2] + "</c13>\n";
+    output += "<c21>" + board[1][0] + "</c21>\n";
+    output += "<c22>" + board[1][1] + "</c22>\n";
+    output += "<c23>" + board[1][2] + "</c23>\n";
+    output += "<c31>" + board[2][0] + "</c31>\n";
+    output += "<c32>" + board[2][1] + "</c32>\n";
+    output += "<c33>" + board[2][2] + "</c33>\n";
+    output += "</brd>\n";
+    output += "</g>\n";
+    return output;
+}
+
+
+
+QString getTagValue(const QString& response, const QString& tagName) {
+    // Формуємо строки для відкриваючого та закриваючого тегів
+    QString openTag = "<" + tagName + ">";
+    QString closeTag = "</" + tagName + ">";
+
+    // Знаходимо позиції відкриваючого та закриваючого тегів
+    int startIndex = response.indexOf(openTag);
+    int endIndex = response.indexOf(closeTag, startIndex);
+
+    // Якщо тег не знайдено, повертаємо пустий рядок
+    if (startIndex == -1 || endIndex == -1) {
+        return QString();
+    }
+
+    // Вираховуємо позицію, з якої починається текст між тегами
+    startIndex += openTag.length();
+
+    // Витягуємо текст між тегами
+    return response.mid(startIndex, endIndex - startIndex);
+}
+
+
+
+void MainWindow::parseXML(QString input) {
+
+    connect_arduino = getTagValue(input, "con");
+    game_started = getTagValue(input, "gs");
+    game_mode = getTagValue(input, "gm");
+    ai_strategy = getTagValue(input, "ais");
+    message = getTagValue(input, "msg");
+    ui->label_arduino_msg->setText(QString(message));
+
+    next_turn  = getTagValue(input, "nt");
+
+    board[0][0] = getTagValue(input, "c11");
+    board[0][1] = getTagValue(input, "c12");
+    board[0][2] = getTagValue(input, "c13");
+    board[1][0] = getTagValue(input, "c21");
+    board[1][1] = getTagValue(input, "c22");
+    board[1][2] = getTagValue(input, "c23");
+    board[2][0] = getTagValue(input, "c31");
+    board[2][1] = getTagValue(input, "c32");
+    board[2][2] = getTagValue(input, "c33");
+}
 
 
 
@@ -39,6 +113,8 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->labelBoard->setPixmap(boardPixmap);
     // ui->labelBoard->setScaledContents(true);
 
+
+
     loadComPorts();
 
     connect(ui->comboBoxPorts, SIGNAL(currentTextChanged(const QString &)),
@@ -47,14 +123,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+    QString xmlData = buildXML();
+    updateGameBoard();
 
 
-
-    updateGameBoard(xmlData);
-
-
-    ui->radioButton_mai->setChecked(true);
-    ui->radioButton_ws->setChecked(true);
+    // ui->radioButton_mai->setChecked(true);
+    // ui->radioButton_rm->setChecked(true);
 
 
 
@@ -69,33 +143,17 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::updateGameBoard(const QString &xmlData)
+void MainWindow::updateGameBoard()
 {
-    QDomDocument doc;
-    if (!doc.setContent(xmlData)) {
-        qDebug() << "Error parsing XML";
-        return;
-    }
-
-    // Отримуємо кореневий елемент
-    QDomElement root = doc.documentElement();
-    QDomElement gameBoard = root.firstChildElement("brd");
-
-    // QDomNodeList c13List = root.elementsByTagName("c13");
-    // if (!c13List.isEmpty()) {
-    //     c13List.at(0).firstChild().setNodeValue("o"); // Change the value to "1"
-    // }
-
-    // Оновлюємо кнопки на основі значень з XML
-    updateButtonIcon(ui->button_11, gameBoard.firstChildElement("c11").text());
-    updateButtonIcon(ui->button_12, gameBoard.firstChildElement("c12").text());
-    updateButtonIcon(ui->button_13, gameBoard.firstChildElement("c13").text());
-    updateButtonIcon(ui->button_21, gameBoard.firstChildElement("c21").text());
-    updateButtonIcon(ui->button_22, gameBoard.firstChildElement("c22").text());
-    updateButtonIcon(ui->button_23, gameBoard.firstChildElement("c23").text());
-    updateButtonIcon(ui->button_31, gameBoard.firstChildElement("c31").text());
-    updateButtonIcon(ui->button_32, gameBoard.firstChildElement("c32").text());
-    updateButtonIcon(ui->button_33, gameBoard.firstChildElement("c33").text());
+    updateButtonIcon(ui->button_11, board[0][0]);
+    updateButtonIcon(ui->button_12, board[0][1]);
+    updateButtonIcon(ui->button_13, board[0][2]);
+    updateButtonIcon(ui->button_21, board[1][0]);
+    updateButtonIcon(ui->button_22, board[1][1]);
+    updateButtonIcon(ui->button_23, board[1][2]);
+    updateButtonIcon(ui->button_31, board[2][0]);
+    updateButtonIcon(ui->button_32, board[2][1]);
+    updateButtonIcon(ui->button_33, board[2][2]);
 }
 
 void MainWindow::updateButtonIcon(QPushButton *button, const QString &value)
@@ -116,9 +174,21 @@ void MainWindow::updateButtonIcon(QPushButton *button, const QString &value)
 
 
 
+void MainWindow::ava_mode() {
 
 
+    while (game_started == "1") {
 
+        QString receivedXml = sendArduino();
+        parseXML(receivedXml);
+
+        updateGameBoard();
+
+        QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
+
+        //Sleep(150);
+    }
+}
 
 
 
@@ -126,8 +196,37 @@ void MainWindow::updateButtonIcon(QPushButton *button, const QString &value)
 
 void MainWindow::on_newButton_clicked()
 {
-    ui->labelPort->setText("test text");
+
+    resetValues();
+    game_started = "1";
+
+    if (game_mode == "ava")
+    {
+        ui->newButton->setEnabled(false);
+        ui->label_pc_msg->setText("AI vs AI");
+        ava_mode();
+        ui->newButton->setEnabled(true);
+        return;
+    }
+
+
+
+    QString receivedXml = sendArduino();
+    parseXML(receivedXml);
+
+    updateGameBoard();
+
+
+
 }
+
+
+
+
+
+
+
+
 
 void MainWindow::loadComPorts()
 {
@@ -174,7 +273,7 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
     ui->labelPort->setStyleSheet("QLabel { color : lightblue; }");
     QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
 
-    if (testArduino(port)) {
+    if (connectArduino(port)) {
         // Якщо відповідь від Arduino коректна
         ui->labelPort->setText("Arduino is connected");
         ui->labelPort->setStyleSheet("QLabel { color : lightgreen; }");
@@ -183,6 +282,8 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
         ui->newButton->setEnabled(true);
         ui->loadButton->setEnabled(true);
         ui->saveButton->setEnabled(true);
+
+        portArduino = port;
 
 
     } else {
@@ -200,36 +301,53 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
 
 
 
-QString getTagValue(const QString& response, const QString& tagName) {
-    // Формуємо строки для відкриваючого та закриваючого тегів
-    QString openTag = "<" + tagName + ">";
-    QString closeTag = "</" + tagName + ">";
 
-    // Знаходимо позиції відкриваючого та закриваючого тегів
-    int startIndex = response.indexOf(openTag);
-    int endIndex = response.indexOf(closeTag, startIndex);
 
-    // Якщо тег не знайдено, повертаємо пустий рядок
-    if (startIndex == -1 || endIndex == -1) {
-        return QString();
+
+QString MainWindow::sendArduino() {
+
+    QString xmlData = buildXML();
+
+    QString xmlData_trim = xmlData.remove(QChar(' '));
+    xmlData_trim.remove(QChar('\n'));
+    xmlData_trim.remove(QChar('\t'));
+
+    std::string xmlString = xmlData_trim.toStdString();
+    const char *dataToSend = xmlString.c_str();
+
+    qDebug() << "Sended  :" << dataToSend;
+    //const char *dataToSend = "0";
+    DWORD bytesWritten;
+    if (!WriteFile(hSerial, dataToSend, strlen(dataToSend), &bytesWritten, nullptr)) {
+        CloseHandle(hSerial);
+        return "";  // Помилка при відправці даних
     }
 
-    // Вираховуємо позицію, з якої починається текст між тегами
-    startIndex += openTag.length();
+    // Чекаємо на відповідь
+    char incomingData[256] = {0};
+    DWORD bytesRead;
+    if (!ReadFile(hSerial, incomingData, sizeof(incomingData), &bytesRead, nullptr)) {
+        CloseHandle(hSerial);
+        return "";  // Помилка при отриманні даних
+    }
 
-    // Витягуємо текст між тегами
-    return response.mid(startIndex, endIndex - startIndex);
+    // Закриваємо порт
+    // CloseHandle(hSerial);
+
+    // Перевіряємо, чи отримали правильну відповідь
+    QString response(incomingData);
+    qDebug() << "Response:" << response;
+
+    return response;
 }
 
 
-
-
-
 // Функція для тестування зв'язку з Arduino
-bool MainWindow::testArduino(const QString &portName)
+bool MainWindow::connectArduino(const QString &portName)
 {
+    CloseHandle(hSerial);
+
     // Відкриваємо COM-порт
-    HANDLE hSerial;
     hSerial = CreateFileA(portName.toStdString().c_str(),
                           GENERIC_READ | GENERIC_WRITE,
                           0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -271,41 +389,97 @@ bool MainWindow::testArduino(const QString &portName)
 
     Sleep(2000);
 
-    // Відправляємо повідомлення Arduino
 
-    QString xmlData_trim = xmlData.remove(QChar(' '));
-    xmlData_trim.remove(QChar('\n'));
-    xmlData_trim.remove(QChar('\t'));
 
-    std::string xmlString = xmlData_trim.toStdString();
-    const char *dataToSend = xmlString.c_str();
-    qDebug() << "Sended  :" << dataToSend;
-    //const char *dataToSend = "0";
-    DWORD bytesWritten;
-    if (!WriteFile(hSerial, dataToSend, strlen(dataToSend), &bytesWritten, nullptr)) {
-        CloseHandle(hSerial);
-        return false;  // Помилка при відправці даних
-    }
+    resetValues();
+    connect_arduino = "0";
+    QString receivedXml = sendArduino();
 
-    // Чекаємо на відповідь
-    char incomingData[256] = {0};
-    DWORD bytesRead;
-    if (!ReadFile(hSerial, incomingData, sizeof(incomingData), &bytesRead, nullptr)) {
-        CloseHandle(hSerial);
-        return false;  // Помилка при отриманні даних
-    }
-
-    // Закриваємо порт
-    CloseHandle(hSerial);
-
-    // Перевіряємо, чи отримали правильну відповідь
-    QString response(incomingData);
-    qDebug() << "Response:" << response;
-
-    QString conValue = getTagValue(incomingData, "con");
+    QString conValue = getTagValue(receivedXml, "con");
     qDebug() << "conValue:" << conValue;
 
-    return conValue.trimmed() == "1";  // Порівнюємо з відповіддю Arduino
+    parseXML(receivedXml);
+
+    return connect_arduino.trimmed() == "1";  // Порівнюємо з відповіддю Arduino
 }
 
+
+
+void MainWindow::add_player_turn(int row, int col) {
+    if (board[row][col] != "x" && board[row][col] != "o"){
+
+        if (next_turn == "x") {
+            board[row][col] = "x";
+        }
+        else {
+            board[row][col] = "o";
+        }
+
+        ui->label_pc_msg->setText("");
+    }
+    else {
+        ui->label_pc_msg->setText("Select empty cell");
+        return;
+    }
+
+    updateGameBoard();
+    QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
+
+    QString receivedXml = sendArduino();
+    parseXML(receivedXml);
+
+    updateGameBoard();
+
+}
+
+
+void MainWindow::on_button_11_clicked(){ add_player_turn(0, 0); }
+void MainWindow::on_button_12_clicked(){ add_player_turn(0, 1); }
+void MainWindow::on_button_13_clicked(){ add_player_turn(0, 2); }
+void MainWindow::on_button_21_clicked(){ add_player_turn(1, 0); }
+void MainWindow::on_button_22_clicked(){ add_player_turn(1, 1); }
+void MainWindow::on_button_23_clicked(){ add_player_turn(1, 2); }
+void MainWindow::on_button_31_clicked(){ add_player_turn(2, 0); }
+void MainWindow::on_button_32_clicked(){ add_player_turn(2, 1); }
+void MainWindow::on_button_33_clicked(){ add_player_turn(2, 2); }
+
+
+
+
+
+
+void MainWindow::on_radioButton_mai_clicked()
+{
+    game_mode = "mva";
+    qDebug() << "game_mode:" << game_mode;
+}
+
+
+void MainWindow::on_radioButton_mvm_clicked()
+{
+    game_mode = "mvm";
+    qDebug() << "game_mode:" << game_mode;
+}
+
+
+void MainWindow::on_radioButton_ava_clicked()
+{
+    game_mode = "ava";
+    qDebug() << "game_mode:" << game_mode;
+}
+
+
+
+void MainWindow::on_radioButton_rm_clicked()
+{
+    ai_strategy = "rand";
+    qDebug() << "ai_strategy:" << ai_strategy;
+}
+
+
+void MainWindow::on_radioButton_ws_clicked()
+{
+    ai_strategy = "win";
+    qDebug() << "ai_strategy:" << ai_strategy;
+}
 
