@@ -28,7 +28,10 @@ void loop() {
 
     parseXML(receivedMessage);
 
-    if (connect_arduino == "0") { connect_arduino = "1"; }
+    if (connect_arduino == "0") { 
+      connect_arduino = "1"; 
+      message = "Successful connection";
+    }
     else if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { mva_rand_move(); }
     else if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { ava_rand_move(); }
     else if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { win_move("o", true); } 

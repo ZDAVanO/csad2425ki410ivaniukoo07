@@ -36,6 +36,7 @@ public:
     QLabel *labelPort;
     QFrame *frame_stats;
     QLabel *label_pc_msg;
+    QLabel *label_info_icon;
     QFrame *frame_game_modes;
     QRadioButton *radioButton_mai;
     QRadioButton *radioButton_mvm;
@@ -57,6 +58,7 @@ public:
     QLabel *label;
     QFrame *frame_2;
     QLabel *label_arduino_msg;
+    QLabel *label_arduino_icon;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -106,7 +108,12 @@ public:
         frame_stats->setFrameShadow(QFrame::Shadow::Raised);
         label_pc_msg = new QLabel(frame_stats);
         label_pc_msg->setObjectName("label_pc_msg");
-        label_pc_msg->setGeometry(QRect(10, 10, 181, 31));
+        label_pc_msg->setGeometry(QRect(10, 10, 141, 31));
+        label_info_icon = new QLabel(frame_stats);
+        label_info_icon->setObjectName("label_info_icon");
+        label_info_icon->setGeometry(QRect(160, 10, 31, 31));
+        label_info_icon->setPixmap(QPixmap(QString::fromUtf8(":/resources/assets/info.png")));
+        label_info_icon->setScaledContents(true);
         frame_game_modes = new QFrame(centralwidget);
         frame_game_modes->setObjectName("frame_game_modes");
         frame_game_modes->setEnabled(true);
@@ -201,7 +208,12 @@ public:
         frame_2->setFrameShadow(QFrame::Shadow::Raised);
         label_arduino_msg = new QLabel(frame_2);
         label_arduino_msg->setObjectName("label_arduino_msg");
-        label_arduino_msg->setGeometry(QRect(10, 10, 171, 31));
+        label_arduino_msg->setGeometry(QRect(10, 10, 141, 31));
+        label_arduino_icon = new QLabel(frame_2);
+        label_arduino_icon->setObjectName("label_arduino_icon");
+        label_arduino_icon->setGeometry(QRect(160, 10, 31, 31));
+        label_arduino_icon->setPixmap(QPixmap(QString::fromUtf8(":/resources/assets/arduino.png")));
+        label_arduino_icon->setScaledContents(true);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -225,6 +237,7 @@ public:
         comboBoxPorts->setPlaceholderText(QCoreApplication::translate("MainWindow", "Select Port", nullptr));
         labelPort->setText(QCoreApplication::translate("MainWindow", "Select COM Port with Arduino", nullptr));
         label_pc_msg->setText(QCoreApplication::translate("MainWindow", "Info here", nullptr));
+        label_info_icon->setText(QString());
         radioButton_mai->setText(QCoreApplication::translate("MainWindow", "Man vs AI", nullptr));
         radioButton_mvm->setText(QCoreApplication::translate("MainWindow", "Man vs Man", nullptr));
         radioButton_ava->setText(QCoreApplication::translate("MainWindow", "AI vs AI", nullptr));
@@ -241,7 +254,8 @@ public:
         radioButton_ws->setText(QCoreApplication::translate("MainWindow", "Win strategy", nullptr));
         radioButton_rm->setText(QCoreApplication::translate("MainWindow", "Random move", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "AI Mode", nullptr));
-        label_arduino_msg->setText(QCoreApplication::translate("MainWindow", "Arduino msg here", nullptr));
+        label_arduino_msg->setText(QCoreApplication::translate("MainWindow", "Arduino messages here", nullptr));
+        label_arduino_icon->setText(QString());
     } // retranslateUi
 
 };

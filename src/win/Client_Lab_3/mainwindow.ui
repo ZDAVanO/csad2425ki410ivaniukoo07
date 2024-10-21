@@ -152,12 +152,31 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>181</width>
+       <width>141</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
       <string>Info here</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_info_icon">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>10</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resources.qrc">:/resources/assets/info.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -536,12 +555,31 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>171</width>
+       <width>141</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Arduino msg here</string>
+      <string>Arduino messages here</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_arduino_icon">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>10</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resources.qrc">:/resources/assets/arduino.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

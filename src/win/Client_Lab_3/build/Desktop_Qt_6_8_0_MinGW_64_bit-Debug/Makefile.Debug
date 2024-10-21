@@ -104,7 +104,9 @@ compiler_rcc_clean:
 	-$(DEL_FILE) debug\qrc_resources.cpp
 debug/qrc_resources.cpp: ../../resources.qrc \
 		C:/Qt/6.8.0/mingw_64/bin/rcc.exe \
+		../../assets/info.png \
 		../../assets/board_c.png \
+		../../assets/arduino.png \
 		../../assets/x2c.png \
 		../../assets/o2c.png
 	C:\Qt\6.8.0\mingw_64\bin\rcc.exe -name resources --no-zstd ..\..\resources.qrc -o debug\qrc_resources.cpp
