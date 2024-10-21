@@ -6,4 +6,7 @@
         <file>assets/arduino.png</file>
         <file>assets/info.png</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>ttt_icon.ico</file>
+    </qresource>
 </RCC>

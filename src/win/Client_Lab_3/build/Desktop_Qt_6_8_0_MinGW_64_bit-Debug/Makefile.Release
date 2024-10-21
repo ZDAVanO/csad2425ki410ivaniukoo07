@@ -108,7 +108,8 @@ release/qrc_resources.cpp: ../../resources.qrc \
 		../../assets/board_c.png \
 		../../assets/arduino.png \
 		../../assets/x2c.png \
-		../../assets/o2c.png
+		../../assets/o2c.png \
+		../../ttt_icon.ico
 	C:\Qt\6.8.0\mingw_64\bin\rcc.exe -name resources --no-zstd ..\..\resources.qrc -o release\qrc_resources.cpp
 
 compiler_moc_predefs_make_all: release/moc_predefs.h
