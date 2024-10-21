@@ -1,9 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QPixmap>
-#include <QDomDocument>
-#include <QPushButton>
-#include <QIcon>
 #include <QFile>
 
 HANDLE hSerial;
@@ -77,8 +73,8 @@ QString getTagValue(const QString& response, const QString& tagName) {
 
 
 
-void MainWindow::parseXML(QString input) {
-
+void MainWindow::parseXML(QString input)
+{
     connect_arduino = getTagValue(input, "con");
     game_started = getTagValue(input, "gs");
     game_mode = getTagValue(input, "gm");
@@ -136,30 +132,16 @@ void MainWindow::loadGameState(const QString& filePath) {
 
 
 
-
-
-
-
-
-
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    // Завантаження зображення
-    // QPixmap boardPixmap(":/resources/assets/board_c.png");
-    // ui->labelBoard->setPixmap(boardPixmap);
-    // ui->labelBoard->setScaledContents(true);
-
     loadComPorts();
 
     connect(ui->comboBoxPorts, SIGNAL(currentTextChanged(const QString &)),
             this, SLOT(onComboBoxPortChanged(const QString &)));
-
-
 
 
     QString xmlData = buildXML();
@@ -172,7 +154,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
 
 
@@ -200,23 +181,6 @@ void MainWindow::updateButtonIcon(QPushButton *button, const QString &value){
 }
 
 
-
-void MainWindow::ava_mode()
-{
-    while (game_started == "1")
-    {
-        QString receivedXml = sendArduino();
-        parseXML(receivedXml);
-
-        updateGameBoard();
-
-        QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
-
-        //Sleep(150);
-    }
-}
-
-
 void MainWindow::on_newButton_clicked()
 {
     resetValues();
@@ -225,22 +189,43 @@ void MainWindow::on_newButton_clicked()
     if (game_mode == "ava")
     {
         ui->newButton->setEnabled(false);
+        ui->loadButton->setEnabled(false);
+        ui->saveButton->setEnabled(false);
+
         ui->label_pc_msg->setText("AI vs AI");
-        ava_mode();
+
+        while (game_started == "1")
+        {
+            // QString receivedXml = sendArduino();
+            // parseXML(receivedXml);
+            parseXML(sendArduino());
+
+            updateGameBoard();
+
+            QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
+
+            //Sleep(150);
+        }
+
         ui->newButton->setEnabled(true);
-        return;
+        ui->loadButton->setEnabled(true);
+        ui->saveButton->setEnabled(true);
+    }
+    else
+    {
+        // QString receivedXml = sendArduino();
+        // parseXML(receivedXml);
+        parseXML(sendArduino());
+
+        updateGameBoard();
     }
 
-    QString receivedXml = sendArduino();
-    parseXML(receivedXml);
 
-    updateGameBoard();
 }
 void MainWindow::on_loadButton_clicked()
 {
     loadGameState("game_state.xml");
     updateGameBoard();
-
 
     if (game_mode == "mva") ui->radioButton_mai->setChecked(true);
     if (game_mode == "mvm") ui->radioButton_mvm->setChecked(true);
@@ -250,8 +235,7 @@ void MainWindow::on_loadButton_clicked()
     if (ai_strategy == "win") ui->radioButton_ws->setChecked(true);
 
 }
-void MainWindow::on_saveButton_clicked()
-{
+void MainWindow::on_saveButton_clicked(){
     saveGameState("game_state.xml");
 }
 
@@ -264,9 +248,6 @@ void MainWindow::loadComPorts()
     // Буфер для збереження імен пристроїв
     char lpTargetPath[5000]; // Буфер для збереження шляху до пристрою
     DWORD result;             // Результат виклику функції
-
-    // Додаємо елемент "None" першим у ComboBox
-    //comPortList.append("None");
 
     for (int i = 1; i <= 255; ++i) {
         // Формуємо ім'я порту: COM1, COM2, ..., COM255
@@ -288,15 +269,6 @@ void MainWindow::loadComPorts()
 // Слот, який викликається при зміні вибраного порту
 void MainWindow::onComboBoxPortChanged(const QString &port)
 {
-
-    // Якщо вибрано "None", не робимо нічого
-    // if (port == "None") {
-    //     ui->labelPort->setText("Please select a COM port");
-    //     ui->labelPort->setStyleSheet("QLabel { color : white; }");
-    //     return;
-    // }
-
-
     ui->labelPort->setText(QString("Trying to connect via %1").arg(port));
     ui->labelPort->setStyleSheet("QLabel { color : lightblue; }");
     QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
@@ -338,8 +310,8 @@ QString MainWindow::sendArduino() {
     std::string xmlString = xmlData_trim.toStdString();
     const char *dataToSend = xmlString.c_str();
 
-    qDebug() << "Sended  :" << dataToSend;
-    //const char *dataToSend = "0";
+    // qDebug() << "Sended  :" << dataToSend;
+
     DWORD bytesWritten;
     if (!WriteFile(hSerial, dataToSend, strlen(dataToSend), &bytesWritten, nullptr)) {
         CloseHandle(hSerial);
@@ -359,7 +331,7 @@ QString MainWindow::sendArduino() {
 
     // Перевіряємо, чи отримали правильну відповідь
     QString response(incomingData);
-    qDebug() << "Response:" << response;
+    // qDebug() << "Response:" << response;
 
     return response;
 }
@@ -435,12 +407,8 @@ void MainWindow::add_player_turn(int row, int col)
 
     if (board[row][col] != "x" && board[row][col] != "o")
     {
-        if (next_turn == "x") {
-            board[row][col] = "x";
-        }
-        else {
-            board[row][col] = "o";
-        }
+        if (next_turn == "x") { board[row][col] = "x"; }
+        else { board[row][col] = "o"; }
 
         ui->label_pc_msg->setText("");
     }

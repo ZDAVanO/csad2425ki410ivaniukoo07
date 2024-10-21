@@ -24,40 +24,28 @@ public:
 
 private slots:
     void on_newButton_clicked();
+    void on_loadButton_clicked();
+    void on_saveButton_clicked();
 
     void onComboBoxPortChanged(const QString &port);
 
     void on_button_11_clicked();
-
     void on_button_12_clicked();
-
     void on_button_13_clicked();
-
     void on_button_21_clicked();
-
     void on_button_22_clicked();
-
     void on_button_23_clicked();
-
     void on_button_31_clicked();
-
     void on_button_32_clicked();
-
     void on_button_33_clicked();
 
     void on_radioButton_mai_clicked();
-
     void on_radioButton_mvm_clicked();
-
     void on_radioButton_ava_clicked();
 
     void on_radioButton_rm_clicked();
-
     void on_radioButton_ws_clicked();
 
-    void on_loadButton_clicked();
-
-    void on_saveButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -73,7 +61,6 @@ private:
 
     void add_player_turn(int row, int col);
 
-    void ava_mode();
     void saveGameState(const QString& filePath);
     void loadGameState(const QString& filePath);
     // QString getTagValue(const QString& response, const QString& tagName);
