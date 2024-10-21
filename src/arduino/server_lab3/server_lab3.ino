@@ -5,38 +5,48 @@ String board[3][3];
 
 
 void setup() {
+  pinMode(13, OUTPUT);
+
+
 
   Serial.begin(9600);  // Налаштування серійного зв'язку зі швидкістю 9600 біт/с
   randomSeed(analogRead(0));  // Ініціалізація генератора випадкових чисел
+
+
+
+  digitalWrite(13, LOW);
 }
 
 void loop() {
   if (Serial.available() > 0) {
 
     String receivedMessage = Serial.readString();  // Читаємо дані з серійного порту
+
+
+    digitalWrite(13, HIGH);
+
+
     parseXML(receivedMessage);
 
-    if (connect_arduino == "0"){
-      connect_arduino = "1";
+    if (connect_arduino == "0") { connect_arduino = "1"; }
+    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { mva_rand_move(); }
+    else if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { ava_rand_move(); }
+    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { win_move("o", true); } 
+
+    else if (game_started == "1" && game_mode == "ava" && ai_strategy == "win") {
+      if (next_turn == "o") { win_move("o", false); }
+      else { win_move("x", false); }
     }
 
-
-    if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { makeRandomMove(); }
-
-    if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { avaMove(); }
-
-    if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { stratMove("o", true); }
-
-    if (game_started == "1" && game_mode == "ava" && ai_strategy == "win"){
-      if (next_turn == "o") { stratMove("o", false); }
-      else { stratMove("x", false); }
-    }
-
-    if (game_started == "1" && game_mode == "mvm") { check_mvm(); }
+    else if (game_started == "1" && game_mode == "mvm") { mvm_move_check(); } 
+    else { message = "Invalid input"; }
 
 
     String output = buildXML();
     output.replace("\n", ""); // Заміна /n на пустий рядок
+
+
+    digitalWrite(13, LOW);
     Serial.print(output);
 
   }
@@ -104,11 +114,9 @@ bool checkForWinner() {
 
 
 
-void avaMove() {
+void ava_rand_move() {
   int emptyCells[9];
   int emptyCount = 0;
-  int x_cells = 0;
-  int o_cells = 0;
 
   if (checkForWinner()) { return; }
 
@@ -116,17 +124,10 @@ void avaMove() {
   for (int row = 0; row < 3; row++) {
     for (int col = 0; col < 3; col++) {
 
-      if (board[row][col] == "x") {
-        x_cells++;
-      }
-      else if (board[row][col] == "o") {
-        o_cells++;
-      }
-      else {
+      if (board[row][col] != "x" && board[row][col] != "o") {   
         emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
         emptyCount++;
       }
-
     }
   }
 
@@ -154,11 +155,9 @@ void avaMove() {
   }
 }
 
-void check_mvm() {
-  int emptyCells[9];
+
+void mvm_move_check() {
   int emptyCount = 0;
-  int x_cells = 0;
-  int o_cells = 0;
 
   if (checkForWinner()) { return; }
 
@@ -166,14 +165,7 @@ void check_mvm() {
   for (int row = 0; row < 3; row++) {
     for (int col = 0; col < 3; col++) {
 
-      if (board[row][col] == "x") {
-        x_cells++;
-      }
-      else if (board[row][col] == "o") {
-        o_cells++;
-      }
-      else {
-        emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
+      if (board[row][col] != "x" && board[row][col] != "o") {
         emptyCount++;
       }
     }
@@ -204,11 +196,10 @@ void check_mvm() {
   }
 }
 
-void makeRandomMove() {
+
+void mva_rand_move() {
   int emptyCells[9];
   int emptyCount = 0;
-  int x_cells = 0;
-  int o_cells = 0;
 
   if (checkForWinner()) { return; }
 
@@ -216,13 +207,8 @@ void makeRandomMove() {
   for (int row = 0; row < 3; row++) {
     for (int col = 0; col < 3; col++) {
 
-      if (board[row][col] == "x") {
-        x_cells++;
-      }
-      else if (board[row][col] == "o") {
-        o_cells++;
-      }
-      else {
+      if (board[row][col] != "x" && board[row][col] != "o") {   
+
         emptyCells[emptyCount] = row * 3 + col;  // Зберігаємо індекс клітинки у вигляді одного числа
         emptyCount++;
       }
@@ -297,7 +283,7 @@ bool checkWin(String player, String currentPlayer) {
   return false;
 }
 
-void stratMove(String currentPlayer, bool randomPlayer) {
+void win_move(String currentPlayer, bool randomPlayer) {
 
   if (checkForWinner()) { return; }
 
@@ -325,9 +311,7 @@ void stratMove(String currentPlayer, bool randomPlayer) {
   if (randomPlayer){
     if (emptyCount == 9) {
       int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
-      if (randomChoice == 0) {
-        return;
-      }
+      if (randomChoice == 0) { return; }
     }
   }
   
