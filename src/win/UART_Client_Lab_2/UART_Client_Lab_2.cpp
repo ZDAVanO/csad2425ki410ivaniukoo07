@@ -2,23 +2,25 @@
 #include <iostream>
 #include <string>
 
+#include "xml_utils.h"
+
 using namespace std;
 
 
-string createXML(const string& message) {
-    return "<message>" + message + "</message>";
-}
-
-string parseXML(const string& xml) {
-    size_t start = xml.find("<message>") + 9; // 9 - це довжина тегу <message>
-    size_t end = xml.find("</message>");
-
-    if (start != string::npos && end != string::npos) {
-        return xml.substr(start, end - start);
-    }
-
-    return ""; // Якщо XML некоректний
-}
+//string createXML(const string& message) {
+//    return "<message>" + message + "</message>";
+//}
+//
+//string parseXML(const string& xml) {
+//    size_t start = xml.find("<message>") + 9; // 9 - це довжина тегу <message>
+//    size_t end = xml.find("</message>");
+//
+//    if (start != string::npos && end != string::npos) {
+//        return xml.substr(start, end - start);
+//    }
+//
+//    return ""; // Якщо XML некоректний
+//}
 
 
 
