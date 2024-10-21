@@ -83,12 +83,12 @@ bool allFieldsOccupied(String board[3][3]) {
 bool checkForWinner() {
 
   if (checkBoardWin(board, "x")) {
-    message = "Winner_X";
+    message = "Winner - X";
     game_started = "0";
     return true;
   }
   else if (checkBoardWin(board, "o")) {
-    message = "Winner_O";
+    message = "Winner - O";
     game_started = "0";
     return true;
   }
@@ -183,23 +183,23 @@ void check_mvm() {
   if (emptyCount == 9) {
     int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
     if (randomChoice == 0) {
-      message = "Player_X_turn";
+      message = "Player X turn";
       next_turn = "x";
       return;
     }
     else {
-      message = "Player_O_turn";
+      message = "Player O turn";
       next_turn = "o";
       return;
     }
   }
 
   if(next_turn == "x") {
-    message = "Player_O_turn";
+    message = "Player O turn";
     next_turn = "o";
   }
   else {
-    message = "Player_X_turn";
+    message = "Player X turn";
     next_turn = "x";
   }
 }
@@ -230,7 +230,7 @@ void makeRandomMove() {
   }
 
   next_turn = "x";
-  message = "Player_x_turn";
+  message = "Player X turn";
 
   if (emptyCount == 9) {
     int randomChoice = random(0, 2);  // Випадковий вибір: 0 або 1
@@ -306,7 +306,10 @@ void stratMove(String currentPlayer, bool randomPlayer) {
   String opponent = (currentPlayer == "x") ? "o" : "x";
 
   next_turn = opponent;
-  message = "Player_"+ opponent +"_turn";
+
+  String upperOpponent = opponent;
+  upperOpponent.toUpperCase();
+  message = "Player "+ upperOpponent +" turn";
 
   int emptyCount = 0;
 
