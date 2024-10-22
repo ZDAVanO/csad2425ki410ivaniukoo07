@@ -20,7 +20,7 @@ jobs:
     - name: Set up Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '5.15.2'  # Виберіть вашу версію Qt
+        version: '5.15.2'
         host: windows
         target: desktop
         arch: 'win32_mingw81'
@@ -31,7 +31,8 @@ jobs:
         
     - name: Build Project
       run: |
-        qmake src/win/Client_Lab_3/lab3.pro
+        cd src/win/Client_Lab_3
+        qmake lab3.pro
         mingw32-make
         windeployqt release\lab3.exe
 
@@ -39,5 +40,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: lab3-client-artifact
-        path: release/** 
+        path: src/win/Client_Lab_3/release/** 
 
