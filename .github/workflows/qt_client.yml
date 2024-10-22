@@ -20,10 +20,10 @@ jobs:
     - name: Set up Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '5.15.2'
+        version: '6.8.0'
         host: windows
         target: desktop
-        arch: 'win32_mingw81'
+        arch: 'win64_mingw'
 
     - name: List available Qt installations
       run: |
