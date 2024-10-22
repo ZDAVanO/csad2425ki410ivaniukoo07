@@ -1,4 +1,4 @@
-name: Build Qt Project
+name: Build Qt Client Project
 
 on:
   push:
