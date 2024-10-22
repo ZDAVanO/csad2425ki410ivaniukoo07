@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -20,23 +20,26 @@ jobs:
     - name: Set up Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: '5.15.2'  # Виберіть вашу версію Qt
-        host: linux
+        version: '6.8.0'  # Виберіть вашу версію Qt
+        host: windows
         target: desktop
-        arch: 'gcc_64'
+        arch: 'win64_msvc2019_64'  # Використовуємо MSVC для білду на Windows
 
     - name: Install dependencies
-      run: sudo apt-get install -y qt5-qmake qtbase5-dev build-essential
+      run: |
+        choco install ninja
+        choco install cmake
+        choco install msvc
 
     - name: Configure the project
       run: qmake src/win/Client_Lab_3/lab3.pro
 
     - name: Build the project
-      run: make
+      run: nmake
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: lab3-binary
-        path: src/win/Client_Lab_3/lab3   # Шлях до вашого зібраного бінарника
+        path: src/win/Client_Lab_3/release   # Шлях до вашого зібраного бінарника
 
