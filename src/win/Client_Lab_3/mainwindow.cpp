@@ -364,7 +364,7 @@ bool MainWindow::connectArduino(const QString &portName)
     }
 
     // Налаштування порту
-    DCB dcbSerialParams = {0};
+    DCB dcbSerialParams = {};
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
     if (!GetCommState(hSerial, &dcbSerialParams)) {
         CloseHandle(hSerial);
@@ -382,7 +382,7 @@ bool MainWindow::connectArduino(const QString &portName)
     }
 
     // Налаштування тайм-аутів
-    COMMTIMEOUTS timeouts = {0};
+    COMMTIMEOUTS timeouts = {};
     timeouts.ReadIntervalTimeout = 50;
     timeouts.ReadTotalTimeoutConstant = 50;
     timeouts.ReadTotalTimeoutMultiplier = 10;
