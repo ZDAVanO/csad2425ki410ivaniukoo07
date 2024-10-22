@@ -1,31 +1,16 @@
-
-
 String connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
 String board[3][3];
 
-
 void setup() {
-  pinMode(13, OUTPUT);
-
-
-
   Serial.begin(9600);  // Налаштування серійного зв'язку зі швидкістю 9600 біт/с
   randomSeed(analogRead(0));  // Ініціалізація генератора випадкових чисел
 
-
-
-  digitalWrite(13, LOW);
 }
 
 void loop() {
   if (Serial.available() > 0) {
 
     String receivedMessage = Serial.readString();  // Читаємо дані з серійного порту
-
-
-    digitalWrite(13, HIGH);
-
-
     parseXML(receivedMessage);
 
     if (connect_arduino == "0") { 
@@ -52,14 +37,9 @@ void loop() {
       message = "Invalid input"; 
     }
 
-
     String output = buildXML();
     output.replace("\n", ""); // Заміна /n на пустий рядок
-
-
-    digitalWrite(13, LOW);
     Serial.print(output);
-
   }
 }
 
@@ -102,7 +82,6 @@ bool allFieldsOccupied(String board[3][3]) {
 }
 
 bool checkForWinner() {
-
   if (checkBoardWin(board, "x")) {
     message = "Winner - X";
     game_started = "0";
