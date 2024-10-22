@@ -23,7 +23,7 @@ jobs:
         version: '5.15.2'  # Виберіть вашу версію Qt
         host: windows
         target: desktop
-        tools: 'tools_mingw'
+        arch: 'win32_mingw73'
 
     - name: Build Project
       run: |
