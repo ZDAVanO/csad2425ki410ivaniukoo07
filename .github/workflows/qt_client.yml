@@ -30,7 +30,7 @@ jobs:
         nmake 
 
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Client_Lab_3_Build
         path: src/win/Client_Lab_3/release/lab3.exe
