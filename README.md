@@ -36,11 +36,11 @@ Development Tools: Arduino IDE, Qt Framework, Git
 
 ### 2. Launching the client part
 
-1. **Ready builds**: In the folder `build/lab3_client.rar` you will find ready builds of the client part of the game. You can unzip the archive and run the program without the need to compile.
+1. **Ready builds**: In the folder `build/client_lab3.rar` you will find ready builds of the client part of the game. You can unzip the archive and run the program without the need to compile.
 2. If you want to compile the client yourself:
    - Open **Qt Creator**.
-   - Navigate to the folder `src/win/Client_Lab_3/`.
-   - Open the client part project (file `lab3.pro`).
+   - Navigate to the folder `src/win/client_lab3/`.
+   - Open the client part project (file `CMakeLists.txt`) in Qt Creator.
    - Compile the project by clicking the `Run` button in Qt Creator.
    - Start the client program.
 

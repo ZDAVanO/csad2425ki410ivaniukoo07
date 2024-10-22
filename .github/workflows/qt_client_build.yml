@@ -26,16 +26,10 @@ jobs:
         arch: 'win64_msvc2022_64'
         tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
 
-    - name: List available Qt installations
-      run: |
-        aqt list-qt windows desktop --arch 6.8.0
-        
-
-
     - name: Configure CMake
       run: |
         cd build
-        cmake -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\msvc2022_64 ../src/win/lab3_cmake
+        cmake -DCMAKE_PREFIX_PATH=C:\Qt\6.8.0\msvc2022_64 ../src/win/client_lab3
 
     - name: Build Project
       run: |
@@ -44,11 +38,11 @@ jobs:
         
     - name: Deploy Qt dependencies
       run: |
-        windeployqt build/Release/lab3_cmake.exe
+        windeployqt build/Release/client_lab3.exe
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: lab3-client-executable
-        path: build/Release/** 
+        path: build/Release
 
