@@ -23,6 +23,7 @@ jobs:
         version: '5.15.2'  # Виберіть вашу версію Qt
         host: windows
         target: desktop
+        arch: 'win32_mingw81'
 
     - name: List available Qt installations
       run: |
