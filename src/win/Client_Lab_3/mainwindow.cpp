@@ -79,6 +79,7 @@ void MainWindow::parseXML(QString input)
     game_started = getTagValue(input, "gs");
     game_mode = getTagValue(input, "gm");
     ai_strategy = getTagValue(input, "ais");
+
     message = getTagValue(input, "msg");
     ui->label_arduino_msg->setText(QString(message));
 
@@ -101,7 +102,7 @@ void MainWindow::saveGameState(const QString& filePath) {
     QFile file(filePath);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        ui->label_pc_msg->setText("cant write file for write");
+        ui->label_pc_msg->setText("Can't open file for write");
         return;
     }
 
@@ -118,7 +119,7 @@ void MainWindow::loadGameState(const QString& filePath) {
     QFile file(filePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui->label_pc_msg->setText("cant open file for read");
+        ui->label_pc_msg->setText("Can't open file for read");
         return;
     }
 
@@ -140,13 +141,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     loadComPorts();
 
-    connect(ui->comboBoxPorts, SIGNAL(currentTextChanged(const QString &)),
-            this, SLOT(onComboBoxPortChanged(const QString &)));
-
-
-    QString xmlData = buildXML();
-    updateGameBoard();
-
+    connect(ui->comboBoxPorts,
+            SIGNAL(currentTextChanged(const QString &)),
+            this,
+            SLOT(onComboBoxPortChanged(const QString &)));
 
 }
 
@@ -177,7 +175,6 @@ void MainWindow::updateButtonIcon(QPushButton *button, const QString &value){
     } else {
         button->setIcon(QIcon());  // Очищаємо іконку, якщо кнопка порожня
     }
-    // button->setEnabled(false);  // Робимо кнопку недоступною для натискання
 }
 
 
@@ -186,20 +183,21 @@ void MainWindow::on_newButton_clicked()
     resetValues();
     game_started = "1";
 
+    ui->label_pc_msg->setText("Game started");
+
     if (game_mode == "ava")
     {
         ui->newButton->setEnabled(false);
         ui->loadButton->setEnabled(false);
         ui->saveButton->setEnabled(false);
 
-        ui->label_pc_msg->setText("AI vs AI");
+        ui->label_pc_msg->setText("AI vs AI mode started");
 
         while (game_started == "1")
         {
             // QString receivedXml = sendArduino();
             // parseXML(receivedXml);
             parseXML(sendArduino());
-
             updateGameBoard();
 
             QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс
@@ -210,13 +208,14 @@ void MainWindow::on_newButton_clicked()
         ui->newButton->setEnabled(true);
         ui->loadButton->setEnabled(true);
         ui->saveButton->setEnabled(true);
+
+        ui->label_pc_msg->setText("Game is over");
     }
     else
     {
         // QString receivedXml = sendArduino();
         // parseXML(receivedXml);
         parseXML(sendArduino());
-
         updateGameBoard();
     }
 
@@ -401,9 +400,9 @@ void MainWindow::add_player_turn(int row, int col)
 {
     // connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
     if (connect_arduino != "1" || game_started != "1" || game_mode == "ava") {
+        ui->label_pc_msg->setText("Game not started");
         return;
     }
-
 
     if (board[row][col] != "x" && board[row][col] != "o")
     {
@@ -426,15 +425,15 @@ void MainWindow::add_player_turn(int row, int col)
     updateGameBoard();
 }
 
-void MainWindow::on_button_11_clicked(){ add_player_turn(0, 0); }
-void MainWindow::on_button_12_clicked(){ add_player_turn(0, 1); }
-void MainWindow::on_button_13_clicked(){ add_player_turn(0, 2); }
-void MainWindow::on_button_21_clicked(){ add_player_turn(1, 0); }
-void MainWindow::on_button_22_clicked(){ add_player_turn(1, 1); }
-void MainWindow::on_button_23_clicked(){ add_player_turn(1, 2); }
-void MainWindow::on_button_31_clicked(){ add_player_turn(2, 0); }
-void MainWindow::on_button_32_clicked(){ add_player_turn(2, 1); }
-void MainWindow::on_button_33_clicked(){ add_player_turn(2, 2); }
+void MainWindow::on_button_11_clicked() { add_player_turn(0, 0); }
+void MainWindow::on_button_12_clicked() { add_player_turn(0, 1); }
+void MainWindow::on_button_13_clicked() { add_player_turn(0, 2); }
+void MainWindow::on_button_21_clicked() { add_player_turn(1, 0); }
+void MainWindow::on_button_22_clicked() { add_player_turn(1, 1); }
+void MainWindow::on_button_23_clicked() { add_player_turn(1, 2); }
+void MainWindow::on_button_31_clicked() { add_player_turn(2, 0); }
+void MainWindow::on_button_32_clicked() { add_player_turn(2, 1); }
+void MainWindow::on_button_33_clicked() { add_player_turn(2, 2); }
 
 
 

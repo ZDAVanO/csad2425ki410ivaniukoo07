@@ -32,17 +32,25 @@ void loop() {
       connect_arduino = "1"; 
       message = "Successful connection";
     }
-    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { mva_rand_move(); }
-    else if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { ava_rand_move(); }
-    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { win_move("o", true); } 
-
+    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "rand") { 
+      mva_rand_move(); 
+    }
+    else if (game_started == "1" && game_mode == "mva" && ai_strategy == "win") { 
+      win_move("o", true); 
+    } 
+    else if (game_started == "1" && game_mode == "ava" && ai_strategy == "rand") { 
+      ava_rand_move(); 
+    }
     else if (game_started == "1" && game_mode == "ava" && ai_strategy == "win") {
       if (next_turn == "o") { win_move("o", false); }
       else { win_move("x", false); }
     }
-
-    else if (game_started == "1" && game_mode == "mvm") { mvm_move_check(); } 
-    else { message = "Invalid input"; }
+    else if (game_started == "1" && game_mode == "mvm") { 
+      mvm_move_check(); 
+    }
+    else { 
+      message = "Invalid input"; 
+    }
 
 
     String output = buildXML();
@@ -146,10 +154,12 @@ void ava_rand_move() {
     if(next_turn == "o"){
       board[row][col] = "o"; 
       next_turn = "x";
+      message = "Player X turn";
     }
     else {
       board[row][col] = "x"; 
       next_turn = "o";
+      message = "Player O turn";
     }  
   }
   else {
