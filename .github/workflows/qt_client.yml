@@ -17,10 +17,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: List available Qt installations
-      run: |
-        aqt list-qt windows desktop --arch 5.15.2
-
     - name: Set up Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -29,7 +25,9 @@ jobs:
         target: desktop
         arch: 'win32_mingw73'
 
-
+    - name: List available Qt installations
+      run: |
+        aqt list-qt windows desktop --arch 5.15.2
         
     - name: Build Project
       run: |
