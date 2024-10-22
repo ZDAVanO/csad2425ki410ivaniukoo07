@@ -23,6 +23,7 @@ jobs:
         version: '6.8.0'
         host: windows
         target: desktop
+        arch: 'win64_mingw'
 
     - name: List available Qt installations
       run: |
