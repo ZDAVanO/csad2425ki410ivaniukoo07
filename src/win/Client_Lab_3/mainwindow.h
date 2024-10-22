@@ -46,6 +46,7 @@ private slots:
     void on_radioButton_rm_clicked();
     void on_radioButton_ws_clicked();
 
+    void on_refreshButton_clicked();
 
 private:
     Ui::MainWindow *ui;

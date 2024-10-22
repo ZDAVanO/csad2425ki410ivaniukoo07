@@ -5,6 +5,7 @@
         <file>assets/o2c.png</file>
         <file>assets/arduino.png</file>
         <file>assets/info.png</file>
+        <file>assets/refresh.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>ttt_icon.ico</file>

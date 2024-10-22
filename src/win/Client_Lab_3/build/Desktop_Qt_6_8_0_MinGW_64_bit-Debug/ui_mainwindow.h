@@ -10,6 +10,7 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
@@ -34,6 +35,7 @@ public:
     QFrame *frame_port;
     QComboBox *comboBoxPorts;
     QLabel *labelPort;
+    QPushButton *refreshButton;
     QFrame *frame_stats;
     QLabel *label_pc_msg;
     QLabel *label_info_icon;
@@ -66,31 +68,31 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(732, 527);
+        MainWindow->resize(772, 530);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         frame_main_buttons = new QFrame(centralwidget);
         frame_main_buttons->setObjectName("frame_main_buttons");
         frame_main_buttons->setEnabled(true);
-        frame_main_buttons->setGeometry(QRect(10, 70, 291, 51));
+        frame_main_buttons->setGeometry(QRect(10, 70, 331, 51));
         frame_main_buttons->setFrameShape(QFrame::Shape::StyledPanel);
         frame_main_buttons->setFrameShadow(QFrame::Shadow::Raised);
         newButton = new QPushButton(frame_main_buttons);
         newButton->setObjectName("newButton");
-        newButton->setEnabled(false);
-        newButton->setGeometry(QRect(10, 10, 91, 31));
+        newButton->setEnabled(true);
+        newButton->setGeometry(QRect(10, 10, 121, 31));
         loadButton = new QPushButton(frame_main_buttons);
         loadButton->setObjectName("loadButton");
-        loadButton->setEnabled(false);
-        loadButton->setGeometry(QRect(110, 10, 81, 31));
+        loadButton->setEnabled(true);
+        loadButton->setGeometry(QRect(140, 10, 86, 31));
         saveButton = new QPushButton(frame_main_buttons);
         saveButton->setObjectName("saveButton");
-        saveButton->setEnabled(false);
-        saveButton->setGeometry(QRect(200, 10, 81, 31));
+        saveButton->setEnabled(true);
+        saveButton->setGeometry(QRect(235, 10, 86, 31));
         frame_port = new QFrame(centralwidget);
         frame_port->setObjectName("frame_port");
         frame_port->setEnabled(true);
-        frame_port->setGeometry(QRect(10, 10, 291, 51));
+        frame_port->setGeometry(QRect(10, 10, 331, 51));
         frame_port->setFrameShape(QFrame::Shape::StyledPanel);
         frame_port->setFrameShadow(QFrame::Shadow::Raised);
         comboBoxPorts = new QComboBox(frame_port);
@@ -99,11 +101,19 @@ public:
         comboBoxPorts->setModelColumn(0);
         labelPort = new QLabel(frame_port);
         labelPort->setObjectName("labelPort");
-        labelPort->setGeometry(QRect(110, 10, 171, 31));
+        labelPort->setGeometry(QRect(140, 10, 181, 31));
         labelPort->setAutoFillBackground(false);
+        labelPort->setAlignment(Qt::AlignmentFlag::AlignCenter);
+        refreshButton = new QPushButton(frame_port);
+        refreshButton->setObjectName("refreshButton");
+        refreshButton->setGeometry(QRect(100, 10, 31, 31));
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/resources/assets/refresh.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        refreshButton->setIcon(icon);
+        refreshButton->setIconSize(QSize(25, 25));
         frame_stats = new QFrame(centralwidget);
         frame_stats->setObjectName("frame_stats");
-        frame_stats->setGeometry(QRect(310, 10, 201, 51));
+        frame_stats->setGeometry(QRect(350, 10, 201, 51));
         frame_stats->setFrameShape(QFrame::Shape::StyledPanel);
         frame_stats->setFrameShadow(QFrame::Shadow::Raised);
         label_pc_msg = new QLabel(frame_stats);
@@ -117,24 +127,24 @@ public:
         frame_game_modes = new QFrame(centralwidget);
         frame_game_modes->setObjectName("frame_game_modes");
         frame_game_modes->setEnabled(true);
-        frame_game_modes->setGeometry(QRect(10, 130, 141, 101));
+        frame_game_modes->setGeometry(QRect(10, 130, 161, 101));
         frame_game_modes->setFrameShape(QFrame::Shape::StyledPanel);
         frame_game_modes->setFrameShadow(QFrame::Shadow::Raised);
         radioButton_mai = new QRadioButton(frame_game_modes);
         radioButton_mai->setObjectName("radioButton_mai");
-        radioButton_mai->setGeometry(QRect(10, 10, 121, 22));
+        radioButton_mai->setGeometry(QRect(10, 10, 141, 22));
         radioButton_mai->setAutoFillBackground(true);
         radioButton_mvm = new QRadioButton(frame_game_modes);
         radioButton_mvm->setObjectName("radioButton_mvm");
-        radioButton_mvm->setGeometry(QRect(10, 40, 121, 22));
+        radioButton_mvm->setGeometry(QRect(10, 40, 141, 22));
         radioButton_mvm->setAutoFillBackground(true);
         radioButton_ava = new QRadioButton(frame_game_modes);
         radioButton_ava->setObjectName("radioButton_ava");
-        radioButton_ava->setGeometry(QRect(10, 70, 121, 22));
+        radioButton_ava->setGeometry(QRect(10, 70, 141, 22));
         radioButton_ava->setAutoFillBackground(true);
         frame_board = new QFrame(centralwidget);
         frame_board->setObjectName("frame_board");
-        frame_board->setGeometry(QRect(310, 70, 411, 411));
+        frame_board->setGeometry(QRect(350, 70, 411, 411));
         frame_board->setFrameShape(QFrame::Shape::StyledPanel);
         frame_board->setFrameShadow(QFrame::Shadow::Raised);
         labelBoard = new QLabel(frame_board);
@@ -182,27 +192,27 @@ public:
         frame_ai_modes = new QFrame(centralwidget);
         frame_ai_modes->setObjectName("frame_ai_modes");
         frame_ai_modes->setEnabled(true);
-        frame_ai_modes->setGeometry(QRect(160, 130, 141, 101));
+        frame_ai_modes->setGeometry(QRect(180, 130, 161, 101));
         frame_ai_modes->setFrameShape(QFrame::Shape::StyledPanel);
         frame_ai_modes->setFrameShadow(QFrame::Shadow::Raised);
         radioButton_ws = new QRadioButton(frame_ai_modes);
         radioButton_ws->setObjectName("radioButton_ws");
-        radioButton_ws->setGeometry(QRect(10, 70, 121, 22));
+        radioButton_ws->setGeometry(QRect(10, 70, 141, 22));
         radioButton_ws->setAutoFillBackground(true);
         radioButton_rm = new QRadioButton(frame_ai_modes);
         radioButton_rm->setObjectName("radioButton_rm");
-        radioButton_rm->setGeometry(QRect(10, 40, 121, 22));
+        radioButton_rm->setGeometry(QRect(10, 40, 141, 22));
         radioButton_rm->setAutoFillBackground(true);
         label = new QLabel(frame_ai_modes);
         label->setObjectName("label");
-        label->setGeometry(QRect(10, 10, 121, 21));
+        label->setGeometry(QRect(10, 10, 141, 21));
         label->setTextFormat(Qt::TextFormat::AutoText);
         label->setScaledContents(false);
         label->setAlignment(Qt::AlignmentFlag::AlignCenter);
         label->setWordWrap(false);
         frame_2 = new QFrame(centralwidget);
         frame_2->setObjectName("frame_2");
-        frame_2->setGeometry(QRect(520, 10, 201, 51));
+        frame_2->setGeometry(QRect(560, 10, 201, 51));
         frame_2->setAutoFillBackground(false);
         frame_2->setFrameShape(QFrame::Shape::StyledPanel);
         frame_2->setFrameShadow(QFrame::Shadow::Raised);
@@ -217,7 +227,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 732, 21));
+        menubar->setGeometry(QRect(0, 0, 772, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -236,6 +246,7 @@ public:
         saveButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
         comboBoxPorts->setPlaceholderText(QCoreApplication::translate("MainWindow", "Select Port", nullptr));
         labelPort->setText(QCoreApplication::translate("MainWindow", "Select COM Port with Arduino", nullptr));
+        refreshButton->setText(QString());
         label_pc_msg->setText(QCoreApplication::translate("MainWindow", "Info here", nullptr));
         label_info_icon->setText(QString());
         radioButton_mai->setText(QCoreApplication::translate("MainWindow", "Man vs AI", nullptr));

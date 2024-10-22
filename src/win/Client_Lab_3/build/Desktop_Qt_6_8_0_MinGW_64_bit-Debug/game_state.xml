@@ -1,0 +1,19 @@
+<g>
+<con>1</con>
+<gs>0</gs>
+<gm>mva</gm>
+<ais>win</ais>
+<msg>Winner - X</msg>
+<nt>x</nt>
+<brd>
+<c11>o</c11>
+<c12>-</c12>
+<c13>x</c13>
+<c21>-</c21>
+<c22>o</c22>
+<c23>x</c23>
+<c31>x</c31>
+<c32>o</c32>
+<c33>x</c33>
+</brd>
+</g>

@@ -146,6 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
             this,
             SLOT(onComboBoxPortChanged(const QString &)));
 
+    ui->frame_main_buttons->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -183,13 +184,11 @@ void MainWindow::on_newButton_clicked()
     resetValues();
     game_started = "1";
 
-    ui->label_pc_msg->setText("Game started");
-
     if (game_mode == "ava")
     {
-        ui->newButton->setEnabled(false);
-        ui->loadButton->setEnabled(false);
-        ui->saveButton->setEnabled(false);
+        ui->frame_main_buttons->setEnabled(false);
+        ui->frame_game_modes->setEnabled(false);
+        ui->frame_ai_modes->setEnabled(false);
 
         ui->label_pc_msg->setText("AI vs AI mode started");
 
@@ -205,9 +204,9 @@ void MainWindow::on_newButton_clicked()
             //Sleep(150);
         }
 
-        ui->newButton->setEnabled(true);
-        ui->loadButton->setEnabled(true);
-        ui->saveButton->setEnabled(true);
+        ui->frame_main_buttons->setEnabled(true);
+        ui->frame_game_modes->setEnabled(true);
+        ui->frame_ai_modes->setEnabled(true);
 
         ui->label_pc_msg->setText("Game is over");
     }
@@ -216,10 +215,13 @@ void MainWindow::on_newButton_clicked()
         // QString receivedXml = sendArduino();
         // parseXML(receivedXml);
         parseXML(sendArduino());
+
+        if (game_started == "1"){
+            ui->label_pc_msg->setText("Game started");
+        }
+
         updateGameBoard();
     }
-
-
 }
 void MainWindow::on_loadButton_clicked()
 {
@@ -241,6 +243,8 @@ void MainWindow::on_saveButton_clicked(){
 
 void MainWindow::loadComPorts()
 {
+    ui->comboBoxPorts->clear();
+
     // Список для збереження імен портів
     QStringList comPortList;
 
@@ -278,25 +282,33 @@ void MainWindow::onComboBoxPortChanged(const QString &port)
         ui->labelPort->setStyleSheet("QLabel { color : lightgreen; }");
 
         // Активуємо кнопки
-        ui->newButton->setEnabled(true);
-        ui->loadButton->setEnabled(true);
-        ui->saveButton->setEnabled(true);
+        ui->frame_main_buttons->setEnabled(true);
 
         portArduino = port;
     }
     else {
-        // Якщо помилка при зв'язку з Arduino
-        ui->labelPort->setText(QString("Failed to connect via %1").arg(port));
-        ui->labelPort->setStyleSheet("QLabel { color : red; }");
+        if (port.length() > 0) {
+            // Якщо помилка при зв'язку з Arduino
+            ui->labelPort->setText(QString("Failed to connect via %1").arg(port));
+            ui->labelPort->setStyleSheet("QLabel { color : red; }");
+        }
+        else {
+            ui->labelPort->setText(QString("Select COM Port with Arduino"));
+            ui->labelPort->setStyleSheet("QLabel { color : lightblue; }");
+        }
 
         // Деактивуємо кнопки
-        ui->newButton->setEnabled(false);
-        ui->loadButton->setEnabled(false);
-        ui->saveButton->setEnabled(false);
+        ui->frame_main_buttons->setEnabled(false);
     }
+
+    updateGameBoard();
+
 }
 
-
+void MainWindow::on_refreshButton_clicked()
+{
+    loadComPorts();
+}
 
 QString MainWindow::sendArduino() {
 
@@ -439,14 +451,17 @@ void MainWindow::on_button_33_clicked() { add_player_turn(2, 2); }
 
 void MainWindow::on_radioButton_mai_clicked(){
     game_mode = "mva";
+    // ui->frame_ai_modes->setEnabled(true);
     // qDebug() << "game_mode:" << game_mode;
 }
 void MainWindow::on_radioButton_mvm_clicked(){
     game_mode = "mvm";
+    // ui->frame_ai_modes->setEnabled(false);
     // qDebug() << "game_mode:" << game_mode;
 }
 void MainWindow::on_radioButton_ava_clicked(){
     game_mode = "ava";
+    // ui->frame_ai_modes->setEnabled(true);
     // qDebug() << "game_mode:" << game_mode;
 }
 
@@ -458,4 +473,8 @@ void MainWindow::on_radioButton_ws_clicked(){
     ai_strategy = "win";
     // qDebug() << "ai_strategy:" << ai_strategy;
 }
+
+
+
+
 
