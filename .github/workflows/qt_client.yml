@@ -17,26 +17,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup MinGW
-      run: |
-        choco install mingw --version 8.1.0
-
-    - name: Install Qt
-      run: |
-        choco install qt --version 6.8.0 --params "'/InstallDir:C:\Qt\6.8.0'"
-
-    - name: Build the project
-      run: |
-        C:\Qt\6.8.0\Tools\Qt\Qt6.8.0\Tools\QtCreator\bin\qmake.exe src/win/Client_Lab_3/lab3.pro
-        C:\MinGW\bin\mingw32-make.exe
-        
-    - name: Deploy Qt application
-      run: |
-        C:\Qt\6.8.0\bin\windeployqt.exe release\lab3.exe
-
-    - name: Save build artifacts
-      uses: actions/upload-artifact@v4
+    - name: Set up Qt
+      uses: supermarin/qt-action@v1.0.0
       with:
-        name: lab3-client-executable
-        path: release/** 
+        qt-version: '5.8.0' 
+        cmake: false
+
+    - name: Build with qmake
+      run: |
+        cd src/win/Client_Lab_3
+        qmake
+        nmake 
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Client_Lab_3_Build
+        path: src/win/Client_Lab_3/release/lab3.exe
 
