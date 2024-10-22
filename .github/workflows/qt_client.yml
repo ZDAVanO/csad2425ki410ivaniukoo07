@@ -26,7 +26,7 @@ jobs:
 
     - name: List available Qt installations
       run: |
-        aqt list-qt windows desktop --arch 5.15.2
+        aqt list-qt windows desktop --arch 6.8.0
         
     - name: Build Project
       run: |
