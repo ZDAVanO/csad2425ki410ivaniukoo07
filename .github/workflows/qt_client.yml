@@ -23,29 +23,16 @@ jobs:
         version: '5.15.2'  # Виберіть вашу версію Qt
         host: windows
         target: desktop
-        arch: 'win64_msvc2019_64'  # Використовуємо MSVC для білду на Windows
 
-    - name: Install dependencies
+    - name: Build Project
       run: |
-        choco install ninja
-        choco install cmake
-        choco install msvc
-
-    - name: Configure the project
-      run: |
-        mkdir build
-        cd build
-        cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/5.15.2/msvc2019_64" ..
-
-    - name: Build the project
-      run: |
-        cd build
-        cmake --build .
+        qmake src/win/Client_Lab_3/lab3.pro
+        mingw32-make
+        windeployqt release\lab3.exe
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: lab3-binary
-        path: |
-          build/Client_Lab_3/lab3.exe  # Тут треба вказати шлях до бінарника, який генерується
+        name: lab3-client-artifact
+        path: release/** 
 
