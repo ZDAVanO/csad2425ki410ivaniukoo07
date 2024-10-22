@@ -24,6 +24,7 @@ jobs:
         host: windows
         target: desktop
         arch: 'win64_msvc2022_64'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
 
     - name: List available Qt installations
       run: |
@@ -40,12 +41,11 @@ jobs:
       run: |
         cd build
         cmake --build . --config Release
-
-    - name: Deploy Qt Application
+        
+    - name: Deploy Qt dependencies
       run: |
-        cd build/Release
-        C:\Qt\6.8.0\msvc2022_64\bin\windeployqt.exe lab3_cmake.exe
-      
+        windeployqt build/Release/lab3_cmake.exe
+
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
