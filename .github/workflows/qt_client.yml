@@ -17,27 +17,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.8.0'
-        host: windows
-        target: desktop
-        arch: 'win64_mingw'
+    - name: Setup MinGW
+      run: |
+        choco install mingw --version 8.1.0
 
-    - name: List available Qt installations
+    - name: Install Qt
       run: |
-        aqt list-qt windows desktop --arch 5.15.2
+        choco install qt --version 6.8.0 --params "'/InstallDir:C:\Qt\6.8.0'"
+
+    - name: Build the project
+      run: |
+        C:\Qt\6.8.0\Tools\Qt\Qt6.8.0\Tools\QtCreator\bin\qmake.exe src/win/Client_Lab_3/lab3.pro
+        C:\MinGW\bin\mingw32-make.exe
         
-    - name: Build Project
+    - name: Deploy Qt application
       run: |
-        qmake src/win/Client_Lab_3/lab3.pro
-        mingw32-make
-        windeployqt release\lab3.exe
+        C:\Qt\6.8.0\bin\windeployqt.exe release\lab3.exe
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: lab3-client-artifact
-        path: src/win/Client_Lab_3/release/** 
+        name: lab3-client-executable
+        path: release/** 
 
