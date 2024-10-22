@@ -18,12 +18,12 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.0'  # Виберіть вашу версію Qt
+        version: '5.15.2'  # Виберіть вашу версію Qt
         host: windows
         target: desktop
-        arch: 'win64_msvc2019_64'  # Використовуємо MSVC для білду на Windows
+        arch: 'win64_msvc2019'  # Використовуємо MSVC для білду на Windows
 
     - name: Install dependencies
       run: |
@@ -32,14 +32,20 @@ jobs:
         choco install msvc
 
     - name: Configure the project
-      run: qmake src/win/Client_Lab_3/lab3.pro
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/5.15.2/msvc2019_64" ..
 
     - name: Build the project
-      run: nmake
+      run: |
+        cd build
+        cmake --build .
 
     - name: Save build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: lab3-binary
-        path: src/win/Client_Lab_3/release   # Шлях до вашого зібраного бінарника
+        path: |
+          build/Client_Lab_3/lab3.exe  # Тут треба вказати шлях до бінарника, який генерується
 
