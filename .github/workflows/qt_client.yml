@@ -31,8 +31,7 @@ jobs:
         
     - name: Build Project
       run: |
-        cd src/win/Client_Lab_3
-        qmake lab3.pro
+        qmake src/win/Client_Lab_3/lab3.pro
         mingw32-make
         windeployqt release\lab3.exe
 
