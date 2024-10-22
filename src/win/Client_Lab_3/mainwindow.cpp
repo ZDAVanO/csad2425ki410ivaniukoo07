@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFile>
 #include <QTextStream>
+#include <windows.h>
 
 HANDLE hSerial;
 QString portArduino;
