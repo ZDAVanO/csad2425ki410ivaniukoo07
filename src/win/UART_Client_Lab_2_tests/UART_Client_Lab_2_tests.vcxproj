@@ -164,6 +164,9 @@
       <Project>{c45808a5-c59b-48d5-8b6a-8df7dbe95757}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\UART_Client_Lab_2\xml_utils.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
