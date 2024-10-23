@@ -1,4 +1,4 @@
-#include <windows.h>
+п»ї#include <windows.h>
 #include <iostream>
 #include <string>
 
@@ -6,38 +6,18 @@
 
 using namespace std;
 
-
-//string createXML(const string& message) {
-//    return "<message>" + message + "</message>";
-//}
-//
-//string parseXML(const string& xml) {
-//    size_t start = xml.find("<message>") + 9; // 9 - це довжина тегу <message>
-//    size_t end = xml.find("</message>");
-//
-//    if (start != string::npos && end != string::npos) {
-//        return xml.substr(start, end - start);
-//    }
-//
-//    return ""; // Якщо XML некоректний
-//}
-
-
-
 int main() {
-     /*Запит номера COM-порту у користувача*/
+
     int portNumber;
     cout << "Enter COM port number (e.g., 6 for COM6): ";
     cin >> portNumber;
 
-    // Формування назви порту
     string portName_s = "COM" + to_string(portNumber);
     const char* portName = portName_s.c_str();
 
-
     /*const char* portName = "COM6";*/
 
-    // Відкриття COM-порту
+    // Р’С–РґРєСЂРёС‚С‚СЏ COM-РїРѕСЂС‚Сѓ
     HANDLE hSerial = CreateFileA(portName, // portName.c_str()
         GENERIC_READ | GENERIC_WRITE,
         0,
@@ -52,7 +32,7 @@ int main() {
         return 1;
     }
 
-    // Налаштування параметрів порту
+    // РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РїР°СЂР°РјРµС‚СЂС–РІ РїРѕСЂС‚Сѓ
     DCB dcbSerialParams = { 0 };
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 
@@ -73,7 +53,7 @@ int main() {
         return 1;
     }
 
-    // Налаштування тайм-аутів
+    // РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С‚Р°Р№РјР°СѓС‚С–РІ
     COMMTIMEOUTS timeouts = { 0 };
     timeouts.ReadIntervalTimeout = 50;
     timeouts.ReadTotalTimeoutConstant = 50;
@@ -87,22 +67,20 @@ int main() {
 
     Sleep(2000);
 
-    // Цикл для безкінечної відправки повідомлень
+    // Р¦РёРєР» РґР»СЏ РЅР°РґСЃРёР»Р°РЅРЅСЏ РїРѕРІС–РґРѕРјР»РµРЅСЊ С– С‡РёС‚Р°РЅРЅСЏ РІС–РґРїРѕРІС–РґРµР№
     while (true) {
-        string message = "hello from pc";  // Повідомлення для відправки
+        string message = "hello from pc";
         string messageXML = createXML(message);
         DWORD bytesWritten;
 
-        
-
-        // Відправка повідомлення до Arduino
+        // РќР°РґСЃРёР»Р°РЅРЅСЏ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ РґРѕ Arduino
         if (!WriteFile(hSerial, messageXML.c_str(), messageXML.size(), &bytesWritten, NULL)) {
             cerr << "Error writing to port" << endl;
             break;
         }
         cout << "Sent: " << message << " (" << messageXML << ")" << endl;
 
-        // Читання відповіді від Arduino
+        // Р§РёС‚Р°РЅРЅСЏ РІС–РґРїРѕРІС–РґС– Р· Arduino
         char buffer[128];
         DWORD bytesRead;
 
@@ -117,11 +95,10 @@ int main() {
             break;
         }
 
-        // Затримка перед наступним запитом
         Sleep(1000);
     }
 
-    // Закриття COM-порту
+    // Р—Р°РєСЂРёС‚С‚СЏ COM-РїРѕСЂС‚Сѓ
     CloseHandle(hSerial);
     return 0;
 }
