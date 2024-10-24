@@ -47,4 +47,4 @@ Development Tools: Arduino IDE, Qt Framework, Git
 
 ## Documentation
 
-Doxygen documentation is available [here](build/documentation/html/index.html).
+Doxygen documentation is available here `build/documentation/html/index.html`.
