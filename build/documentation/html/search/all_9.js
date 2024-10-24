@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['savegamestate_0',['saveGameState',['../class_main_window.html#aa69759016cc8d089b24424f4398179a1',1,'MainWindow']]],
-  ['sendarduino_1',['sendArduino',['../class_main_window.html#ab448585495ed203298d6c8e325d8d793',1,'MainWindow']]]
+  ['resetvalues_0',['resetValues',['../mainwindow_8cpp.html#acf32301ca9b2f3977bf01ea7ed9ae437',1,'mainwindow.cpp']]]
 ];

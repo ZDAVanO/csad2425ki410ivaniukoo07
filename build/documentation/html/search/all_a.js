@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['updatebuttonicon_0',['updateButtonIcon',['../class_main_window.html#a32e3d5db2cee136136ce9400d06ac047',1,'MainWindow']]],
-  ['updategameboard_1',['updateGameBoard',['../class_main_window.html#a50f60673ce0c30600f2a0cbe6c08ba1a',1,'MainWindow']]]
+  ['savegamestate_0',['saveGameState',['../class_main_window.html#aa69759016cc8d089b24424f4398179a1',1,'MainWindow']]],
+  ['sendarduino_1',['sendArduino',['../class_main_window.html#ab448585495ed203298d6c8e325d8d793',1,'MainWindow']]],
+  ['server_5flab3_2eino_2',['server_lab3.ino',['../server__lab3_8ino.html',1,'']]],
+  ['setup_3',['setup',['../server__lab3_8ino.html#a4fc01d736fe50cf5b977f755b675f11d',1,'server_lab3.ino']]]
 ];

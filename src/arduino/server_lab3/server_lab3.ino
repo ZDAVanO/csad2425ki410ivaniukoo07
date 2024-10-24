@@ -1,12 +1,48 @@
-String connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
-String board[3][3];
+/**
+ * @file server_lab3.ino
+ * @brief A simple Arduino server for a Tic-Tac-Toe game.
+ *
+ * This program enables an Arduino to act as a server for a Tic-Tac-Toe game,
+ * supporting various game modes and AI strategies. The game state is managed
+ * through a board represented by a 3x3 array. The server communicates with
+ * clients via serial communication, parsing XML-like messages to update the game
+ * state and respond to moves.
+ *
+ * The program supports two-player modes (human vs. human and human vs. AI)
+ * as well as different AI strategies for making moves. It checks for winning
+ * conditions and manages the game flow accordingly.
+ *
+ * @note This file uses serial communication at a baud rate of 9600 bps.
+ */
 
+
+String connect_arduino;  ///< Connection status flag (0: not connected, 1: connected)
+String game_started;      ///< Game status flag (0: not started, 1: started)
+String game_mode;        ///< Current game mode (e.g., "mva", "ava", "mvm")
+String ai_strategy;       ///< AI strategy being used (e.g., "rand", "win")
+String message;           ///< Message to be sent back to the client
+String next_turn;         ///< Indicates whose turn is next (e.g., "x", "o")
+String board[3][3];       ///< 3x3 Tic-Tac-Toe game board
+
+/**
+ * @brief Initializes the Arduino server.
+ *
+ * This function sets up the serial communication at 9600 bps and initializes
+ * the random number generator.
+ */
 void setup() {
   Serial.begin(9600);  // Налаштування серійного зв'язку зі швидкістю 9600 біт/с
   randomSeed(analogRead(0));  // Ініціалізація генератора випадкових чисел
 
 }
 
+/**
+ * @brief Main loop for handling game logic and serial communication.
+ *
+ * This function continually checks for incoming serial messages, processes
+ * game actions based on the messages, and sends back the game state as an
+ * XML string.
+ */
 void loop() {
   if (Serial.available() > 0) {
 
@@ -44,7 +80,13 @@ void loop() {
   }
 }
 
-
+/**
+ * @brief Checks if a given player has won the game.
+ *
+ * @param board  The current state of the game board.
+ * @param player The player symbol to check for (either "x" or "o").
+ * @return True if the player has won, false otherwise.
+ */
 bool checkBoardWin(String board[3][3], String player) {
   // Перевірка рядків (горизонталі)
   for (int i = 0; i < 3; i++) {
@@ -71,6 +113,12 @@ bool checkBoardWin(String board[3][3], String player) {
   return false;
 }
 
+/**
+ * @brief Checks if all fields on the game board are occupied.
+ *
+ * @param board The current state of the game board.
+ * @return True if all fields are occupied, false otherwise.
+ */
 bool allFieldsOccupied(String board[3][3]) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
@@ -82,6 +130,14 @@ bool allFieldsOccupied(String board[3][3]) {
   return true; // Якщо всі поля заповнені
 }
 
+/**
+ * @brief Checks for a winner or a draw in the game.
+ *
+ * This function evaluates the game state and sets the message and game
+ * status accordingly.
+ *
+ * @return True if there is a winner or a draw, false otherwise.
+ */
 bool checkForWinner() {
   if (checkBoardWin(board, "x")) {
     message = "Winner - X";
@@ -103,7 +159,12 @@ bool checkForWinner() {
   }
 }
 
-
+/**
+ * @brief Makes a random move for the AI in "ava" mode.
+ *
+ * The function searches for empty cells on the board and makes a random
+ * move. If a player has won, it stops making moves.
+ */
 void ava_rand_move() {
   int emptyCells[9];
   int emptyCount = 0;
@@ -150,7 +211,12 @@ void ava_rand_move() {
   }
 }
 
-
+/**
+ * @brief Checks the state of the game for "mvm" mode.
+ *
+ * This function checks for available moves and determines the turn for the
+ * players.
+ */
 void mvm_move_check() {
   int emptyCount = 0;
 
@@ -191,7 +257,12 @@ void mvm_move_check() {
   }
 }
 
-
+/**
+ * @brief Makes a random move for the AI in "mva" mode.
+ *
+ * The function searches for empty cells on the board and makes a random
+ * move, if available.
+ */
 void mva_rand_move() {
   int emptyCells[9];
   int emptyCount = 0;
@@ -237,7 +308,13 @@ void mva_rand_move() {
 }
 
 
-
+/**
+ * @brief Checks if a player can win in the next move.
+ *
+ * @param player The symbol of the player to check.
+ * @param currentPlayer The current player making the move.
+ * @return True if a winning move is made, false otherwise.
+ */
 bool checkWin(String player, String currentPlayer) {
   for (int i = 0; i < 3; i++) {
     // Перевірка рядків і стовпців
@@ -278,6 +355,15 @@ bool checkWin(String player, String currentPlayer) {
   return false;
 }
 
+/**
+ * @brief Attempts to make a winning move for the current player.
+ *
+ * The function will prioritize winning moves, blocking opponent's winning moves,
+ * and then filling available spaces strategically.
+ *
+ * @param currentPlayer The current player symbol making the move.
+ * @param randomPlayer Indicates if the player can make a random move.
+ */
 void win_move(String currentPlayer, bool randomPlayer) {
 
   if (checkForWinner()) { return; }
@@ -384,7 +470,11 @@ void win_move(String currentPlayer, bool randomPlayer) {
 }
 
 
-
+/**
+ * @brief Parses incoming XML-like messages to update game state variables.
+ *
+ * @param input The incoming message containing game state data.
+ */
 void parseXML(String input) {
   connect_arduino = getTagValue(input, "con");
   game_started = getTagValue(input, "gs");
@@ -403,7 +493,13 @@ void parseXML(String input) {
   board[2][2] = getTagValue(input, "c33");
 }
 
-
+/**
+ * @brief Retrieves the value of a specified XML tag from a string.
+ *
+ * @param input The input string containing XML data.
+ * @param tag The tag to retrieve the value for.
+ * @return The value of the tag or "-" if the tag is not found.
+ */
 String getTagValue(String input, String tag) {
   String openTag = "<" + tag + ">";
   String closeTag = "</" + tag + ">";
@@ -417,7 +513,12 @@ String getTagValue(String input, String tag) {
   return input.substring(start, end);
 }
 
-// Функція для збирання нового XML рядка
+
+/**
+ * @brief Constructs an XML string representing the current game state.
+ *
+ * @return A string formatted as XML containing game state information.
+ */
 String buildXML() {
   String output = "<g>\n";
   output += "<con>" + connect_arduino + "</con>\n";

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['portarduino_0',['portArduino',['../mainwindow_8cpp.html#a95fe1b3f5e217a187a1a27b7ad20538a',1,'mainwindow.cpp']]]
+  ['board_0',['board',['../server__lab3_8ino.html#a250043911d75bbb99a2b33e657d776e6',1,'server_lab3.ino']]]
 ];
