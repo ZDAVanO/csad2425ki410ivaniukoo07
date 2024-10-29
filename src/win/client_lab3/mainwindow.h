@@ -23,6 +23,20 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
+    /**
+ * @brief Variables used in the main window of the client application.
+ *
+ * @var connect_arduino Indicates the connection status with the Arduino device.
+ * @var game_started Indicates whether the game has started.
+ * @var game_mode Represents the current game mode.
+ * @var ai_strategy Represents the AI strategy being used.
+ * @var message Stores messages to be displayed or processed.
+ * @var next_turn Indicates whose turn is next in the game.
+ */
+    QString connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
+    QString board[3][3];
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -40,6 +54,10 @@ public:
     void saveGameState(const QString& filePath);
     void loadGameState(const QString& filePath);
     // QString getTagValue(const QString& response, const QString& tagName);
+
+    QString getTagValue(const QString& response, const QString& tagName);
+    QString buildXML();
+    void resetValues();
 
 private slots:
     void on_newButton_clicked();

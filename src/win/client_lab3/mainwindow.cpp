@@ -19,19 +19,6 @@ QString portArduino;
  */
 HANDLE hSerial;
 
-/**
- * @brief Variables used in the main window of the client application.
- * 
- * @var connect_arduino Indicates the connection status with the Arduino device.
- * @var game_started Indicates whether the game has started.
- * @var game_mode Represents the current game mode.
- * @var ai_strategy Represents the AI strategy being used.
- * @var message Stores messages to be displayed or processed.
- * @var next_turn Indicates whose turn is next in the game.
- */
-QString connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
-QString board[3][3];
-
 
 /**
  * @brief Resets the game values to their initial state.
@@ -43,7 +30,7 @@ QString board[3][3];
  * 
  * Note: Some variables such as connect_arduino, game_mode, and ai_strategy are commented out and not reset by this function.
  */
-void resetValues() {
+void MainWindow::resetValues() {
     // connect_arduino = "0";
     game_started = "0";
     // game_mode = "mva";
@@ -68,7 +55,7 @@ void resetValues() {
  *
  * @return QString The XML string representing the current game state.
  */
-QString buildXML() {
+QString MainWindow::buildXML() {
     QString output = "<g>\n";
     output += "<con>" + connect_arduino + "</con>\n";
     output += "<gs>" + game_started + "</gs>\n";
@@ -103,7 +90,7 @@ QString buildXML() {
  * @param tagName The name of the tag whose value needs to be extracted.
  * @return A QString containing the text between the specified tags, or an empty QString if the tags are not found.
  */
-QString getTagValue(const QString& response, const QString& tagName) {
+QString MainWindow::getTagValue(const QString& response, const QString& tagName) {
     // Формуємо строки для відкриваючого та закриваючого тегів
     QString openTag = "<" + tagName + ">";
     QString closeTag = "</" + tagName + ">";
@@ -647,6 +634,11 @@ void MainWindow::add_player_turn(int row, int col)
         return;
     }
 
+    // qDebug() << "Current board state before update:";
+    // for (int i = 0; i < 3; ++i) {
+    //     qDebug() << board[i][0] << board[i][1] << board[i][2];
+    // }
+
     if (board[row][col] != "x" && board[row][col] != "o")
     {
         if (next_turn == "x") { board[row][col] = "x"; }
@@ -658,6 +650,11 @@ void MainWindow::add_player_turn(int row, int col)
         ui->label_pc_msg->setText("Select empty cell");
         return;
     }
+
+    // qDebug() << "Current board state AFTER update:";
+    // for (int i = 0; i < 3; ++i) {
+    //     qDebug() << board[i][0] << board[i][1] << board[i][2];
+    // }
 
     updateGameBoard();
     QCoreApplication::processEvents(); // Дозволяємо Qt оновити інтерфейс

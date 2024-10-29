@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+include_directories(${Qt${QT_VERSION_MAJOR}_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
         main.cpp
@@ -25,17 +26,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         resources.qrc
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET client_lab3 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
         add_library(client_lab3 SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(client_lab3
             ${PROJECT_SOURCES}
@@ -45,9 +40,7 @@ endif()
 
 target_link_libraries(client_lab3 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+# Set properties for macOS/iOS or Windows executable types
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.client_lab3)
 endif()
@@ -69,3 +62,29 @@ install(TARGETS client_lab3
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(client_lab3)
 endif()
+
+# Google Test setup using FetchContent
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+# Enable testing
+enable_testing()
+
+# Define the test executable and link libraries
+add_executable(client_lab3_tests
+    mainwindow_tests.cpp  # Test file
+    mainwindow.cpp  # Include mainwindow sources required for testing
+)
+
+target_link_libraries(client_lab3_tests PRIVATE
+    gtest gtest_main
+    Qt${QT_VERSION_MAJOR}::Widgets
+)
+
+# Add the test to CMake
+include(GoogleTest)
+gtest_discover_tests(client_lab3_tests)
