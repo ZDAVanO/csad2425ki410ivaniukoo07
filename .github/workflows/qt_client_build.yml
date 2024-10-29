@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - develop
+  workflow_dispatch:  # Дозволяє ручний запуск workflow
 
 jobs:
   build:
