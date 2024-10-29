@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - develop
+      - feature/develop/task5 
   pull_request:
     branches:
       - develop
-      - feature/develop/task5 
   workflow_dispatch:  # Дозволяє ручний запуск workflow
 
 jobs:
