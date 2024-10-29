@@ -50,6 +50,7 @@ public:
     void parseXML(QString input);
 
     void add_player_turn(int row, int col);
+    void add_player_turn_cb(QString board[3][3], int row, int col);
 
     void saveGameState(const QString& filePath);
     void loadGameState(const QString& filePath);

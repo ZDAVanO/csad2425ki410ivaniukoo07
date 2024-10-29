@@ -11,7 +11,7 @@ on:
   workflow_dispatch:  # Дозволяє ручний запуск workflow
 
 jobs:
-  build:
+  build_and_tests:
     runs-on: windows-latest
 
     steps:

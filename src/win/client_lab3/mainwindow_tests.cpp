@@ -102,38 +102,40 @@ TEST_F(MainWindowTest, ResetValues_SetsToInitialState) {
 
 
 
+// void MainWindow::add_player_turn_cb(QString board[3][3], int row, int col)
+// Тест для add_player_turn_cb
+TEST_F(MainWindowTest, AddPlayerTurn_UpdatesBoardCorrectly) {
+    QString board2[3][3];
 
-// // Тест для add_player_turn
-// TEST_F(MainWindowTest, AddPlayerTurn_UpdatesBoardCorrectly) {
-//     mainWindow->connect_arduino = "1";
-//     mainWindow->game_started = "1";
-//     mainWindow->game_mode = "mva";
+    mainWindow->connect_arduino = "1";
+    mainWindow->game_started = "1";
+    mainWindow->game_mode = "mva";
 
+    // qDebug() << "board[0][0]: " << board2[0][0];
+    mainWindow->next_turn = "x";
+    mainWindow->add_player_turn_cb(board2, 0, 0);  // Додаємо хрестик
+    // qDebug() << "board[0][0]: " << board2[0][0];
 
-//     mainWindow->board[0][0] = "";
+    EXPECT_EQ(board2[0][0], QString("x"));
 
+}
 
-//     qDebug() << "board[0][0]: " << mainWindow->board[0][0];
-//     mainWindow->next_turn = "x";
-//     mainWindow->add_player_turn(0, 0);  // Додаємо хрестик
+TEST_F(MainWindowTest, AddPlayerTurn_RejectsInvalidMove) {
+    QString board3[3][3];
 
-//     qDebug() << "board[0][0]: " << mainWindow->board[0][0];
+    mainWindow->connect_arduino = "1";
+    mainWindow->game_started = "1";
+    mainWindow->game_mode = "mva";
 
-//     mainWindow->board[0][0] = "x";
-//     EXPECT_EQ(mainWindow->board[0][0], QString("x"));
+    board3[0][0] = "-";
 
-// }
+    mainWindow->next_turn = "x";
+    mainWindow->add_player_turn_cb(board3, 0, 0);  // Додаємо хрестик
+    EXPECT_EQ(board3[0][0], "x");
 
-// TEST_F(MainWindowTest, AddPlayerTurn_RejectsInvalidMove) {
-//     mainWindow->connect_arduino = "1";
-//     mainWindow->game_started = "1";
-//     mainWindow->next_turn = "x";
-//     mainWindow->game_mode = "mva";
-//     mainWindow->add_player_turn(0, 0);  // Додаємо хрестик
-//     EXPECT_EQ(mainWindow->board[0][0], "x");
+    // Спроба поставити хрестик на вже зайняту клітинку
+    mainWindow->add_player_turn_cb(board3, 0, 0);
+    EXPECT_EQ(board3[0][0], "x");  // Клітинка має залишатися без змін
+}
 
-//     // Спроба поставити хрестик на вже зайняту клітинку
-//     mainWindow->add_player_turn(0, 0);
-//     EXPECT_EQ(mainWindow->board[0][0], "x");  // Клітинка має залишатися без змін
-// }
 

@@ -665,6 +665,52 @@ void MainWindow::add_player_turn(int row, int col)
     updateGameBoard();
 }
 
+
+void MainWindow::add_player_turn_cb(QString board2[3][3], int row, int col)
+{
+    // connect_arduino, game_started, game_mode, ai_strategy, message, next_turn;
+    if (connect_arduino != "1" || game_started != "1" || game_mode == "ava") {
+        ui->label_pc_msg->setText("Game not started");
+        return;
+    }
+
+    // Debugging output can be added if needed
+    // qDebug() << "Current board state before update:";
+    // for (int i = 0; i < 3; ++i) {
+    //     qDebug() << board[i][0] << board[i][1] << board[i][2];
+    // }
+
+    if (board2[row][col] != "x" && board2[row][col] != "o") {
+        if (next_turn == "x") {
+            board2[row][col] = "x";
+        } else {
+            board2[row][col] = "o";
+        }
+
+        ui->label_pc_msg->setText("");
+    } else {
+        ui->label_pc_msg->setText("Select empty cell");
+        return;
+    }
+
+    // Debugging output can be added if needed
+    // qDebug() << "Current board state AFTER update:";
+    // for (int i = 0; i < 3; ++i) {
+    //     qDebug() << board[i][0] << board[i][1] << board[i][2];
+    // }
+
+    updateGameBoard();  // Ensure you have logic to update the UI with the new board state
+    QCoreApplication::processEvents(); // Allow Qt to update the interface
+
+    QString receivedXml = sendArduino();  // Assuming this function does not require the board state
+    parseXML(receivedXml);                 // Parse the response from Arduino
+
+    updateGameBoard();  // Update the UI again if necessary after parsing
+}
+
+
+
+
 /**
  * @brief Slot function triggered when button 11 is clicked.
  * 
