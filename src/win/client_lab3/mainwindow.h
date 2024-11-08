@@ -1,3 +1,7 @@
+/**
+@file mainwindow.h
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -21,6 +25,21 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void loadComPorts();
+    bool connectArduino(const QString &port); // Функція для тестування Arduino
+    QString sendArduino();
+
+    void updateGameBoard();
+    void updateButtonIcon(QPushButton *button, const QString &value);
+
+    void parseXML(QString input);
+
+    void add_player_turn(int row, int col);
+
+    void saveGameState(const QString& filePath);
+    void loadGameState(const QString& filePath);
+    // QString getTagValue(const QString& response, const QString& tagName);
 
 private slots:
     void on_newButton_clicked();
@@ -51,19 +70,5 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    void loadComPorts();
-    bool connectArduino(const QString &port); // Функція для тестування Arduino
-    QString sendArduino();
-
-    void updateGameBoard();
-    void updateButtonIcon(QPushButton *button, const QString &value);
-
-    void parseXML(QString input);
-
-    void add_player_turn(int row, int col);
-
-    void saveGameState(const QString& filePath);
-    void loadGameState(const QString& filePath);
-    // QString getTagValue(const QString& response, const QString& tagName);
 };
 #endif // MAINWINDOW_H

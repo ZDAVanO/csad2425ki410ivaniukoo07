@@ -45,4 +45,6 @@ Development Tools: Arduino IDE, Qt Framework, Git
    - Start the client program.
 
 
+## Documentation
 
+Doxygen documentation is available here `build/documentation/html/index.html`.
